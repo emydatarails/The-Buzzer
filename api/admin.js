@@ -10,5 +10,5 @@ export const GET = handle(async request => (isAdmin(request) ? json(await adminS
 export const POST = handle(async request => {
   if (!isAdmin(request)) return denied();
   const result = await adminAction(await readBody(request));
-  return json({ ...(await adminState()), result });
+  return json({ ...(await adminState(true)), result });
 });
