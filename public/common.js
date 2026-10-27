@@ -37,6 +37,9 @@ function toast(msg, kind = '', ms = 3500) {
   toastTimer = setTimeout(() => t.classList.remove('on'), ms);
 }
 
+// The first touch anywhere unlocks sound, and resumes it after switching back from Zoom.
+document.addEventListener('pointerdown', () => audio(), { passive: true });
+
 function flash(kind = '') {
   const f = $('flash');
   f.className = kind;
@@ -61,7 +64,7 @@ function audio() {
       master.connect(actx.destination);
     } catch {}
   }
-  if (actx && actx.state === 'suspended') actx.resume();
+  if (actx && actx.state !== 'running') actx.resume().catch(() => {}); // also iOS 'interrupted' after a call
 }
 function tone(f, d, type = 'sine', v = .18, delay = 0, slide) {
   if (!actx) return;
