@@ -13,35 +13,40 @@
 .join{flex:1;display:grid;place-items:center;padding:10px 0 20px}
 .joincard{width:min(100%,520px);text-align:center;padding:30px clamp(20px,4vw,40px) 30px;animation:fadein .35s both}
 .joincard .bob{width:min(58%,230px);height:auto;margin:-90px auto 0;display:block;filter:drop-shadow(0 18px 22px rgba(0,0,0,.45));animation:float 5s ease-in-out infinite}
+.joincard .eyebrow{text-wrap:balance}
 .joincard h1{font-size:clamp(3.4rem,13vw,5.2rem);line-height:.95;margin:6px 0 4px;text-shadow:0 6px 0 rgba(253,161,17,.22),0 0 60px rgba(253,161,17,.18)}
 .joincard h1 .em{color:var(--pumpkin)}
-.joincard .lead{color:var(--muted);margin:6px 0 20px;font-size:1.05rem}
+.joincard .lead{color:var(--muted);margin:6px 0 20px;font-size:1.05rem;text-wrap:balance}
+.joincard .lead b{color:var(--pumpkin-text)}
 .joincard form{display:flex;flex-direction:column;gap:12px}
 .joincard .btn{width:100%}
+.joincard.edit .bob{width:min(36%,140px);margin-top:-60px}
+.joincard.edit h1{font-size:clamp(2.4rem,10vw,3.6rem)}
 
 /* ---------- Play ---------- */
-.play{flex:1;display:flex;flex-direction:column;align-items:center;gap:clamp(18px,4vh,40px);animation:fadein .35s both}
+.play{flex:1;display:flex;flex-direction:column;align-items:center;gap:clamp(14px,3vh,36px);animation:fadein .35s both;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .hud{width:min(100%,760px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) auto;gap:6px 18px;align-items:center;padding:16px 22px}
 .hud .lbl{display:block;font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);line-height:1.2}
 .hud .val{display:block;font-weight:700;font-size:clamp(1.05rem,2.4vw,1.35rem);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hud .team .val{color:var(--pumpkin-text)}
+.hud .team .val{color:var(--pumpkin-text);white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .hud .score{text-align:right;padding-left:18px;border-left:2px solid var(--line-soft)}
 .hud .score .val{font-family:Creepster,Poppins,sans-serif;font-weight:400;font-size:clamp(2.6rem,7vw,3.4rem);line-height:1;color:var(--ink);overflow:visible;font-variant-numeric:tabular-nums}
 .hud .score .val.pop{animation:pop .4s cubic-bezier(.2,1.4,.5,1);color:var(--pink)}
+.hud .short{display:none}
 
-.buzzwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;width:100%}
-.buzzer{--size:min(76vw,52vh,380px);position:relative;width:var(--size);height:var(--size);border-radius:50%;border:0;cursor:pointer;padding:0;
-  display:grid;place-items:center;color:var(--navy);-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;
+.buzzwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,3vh,22px);width:100%}
+.buzzer{--size:min(76vw,46vh,380px);position:relative;flex:none;width:var(--size);height:var(--size);border-radius:50%;border:0;cursor:pointer;padding:0;
+  display:grid;place-items:center;color:var(--navy);-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
   background:radial-gradient(circle at 36% 30%,#FFD27A 0%,#FDA111 45%,#D9770A 100%);
   box-shadow:0 18px 0 #9C4F05,0 26px 50px rgba(0,0,0,.55),inset 0 -16px 30px rgba(0,0,0,.18),inset 0 12px 24px rgba(255,255,255,.35);
   transition:transform .08s,box-shadow .08s,filter .2s}
+@supports (height:1svh){ .buzzer{--size:min(76vw,46svh,380px)} }
 .buzzer::before{content:"";position:absolute;inset:-18px;border-radius:50%;border:6px solid rgba(253,161,17,.55);animation:halo 1.6s ease-out infinite;pointer-events:none}
 @keyframes halo{0%{transform:scale(.94);opacity:.9}100%{transform:scale(1.14);opacity:0}}
 .buzzer .face{display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none}
 .buzzer .big{font-family:Creepster,Poppins,sans-serif;font-size:calc(var(--size) * .27);line-height:.9;letter-spacing:.02em;text-shadow:0 3px 0 rgba(255,255,255,.35)}
-.buzzer .sub{font-weight:700;font-size:calc(var(--size) * .055);opacity:.8;max-width:80%;line-height:1.2}
-.buzzer:hover{filter:brightness(1.06)}
-.buzzer:active,.buzzer.pending{transform:translateY(14px);box-shadow:0 4px 0 #9C4F05,0 10px 26px rgba(0,0,0,.5),inset 0 -10px 24px rgba(0,0,0,.22),inset 0 10px 20px rgba(255,255,255,.3)}
+.buzzer .sub{font-weight:700;font-size:max(13px,calc(var(--size) * .055));opacity:.8;max-width:80%;line-height:1.2;overflow-wrap:break-word}
+.buzzer.pending{transform:translateY(14px);box-shadow:0 4px 0 #9C4F05,0 10px 26px rgba(0,0,0,.5),inset 0 -10px 24px rgba(0,0,0,.22),inset 0 10px 20px rgba(255,255,255,.3)}
 .buzzer.mine{background:radial-gradient(circle at 36% 30%,#FF8DB3 0%,#F73476 50%,#B0164D 100%);color:#fff;transform:translateY(14px);
   box-shadow:0 4px 0 #7A0E34,0 0 80px 20px rgba(247,52,118,.55),inset 0 -10px 24px rgba(0,0,0,.22),inset 0 10px 20px rgba(255,255,255,.3);cursor:default;animation:wobble .5s ease-in-out infinite alternate}
 .buzzer.mine::before{border-color:rgba(247,52,118,.7)}
@@ -52,24 +57,56 @@
 .buzzer.locked::before{display:none}
 .buzzer.locked .big{text-shadow:none;font-size:calc(var(--size) * .2)}
 .buzzer.flip .face{animation:unmask .5s cubic-bezier(.2,.8,.2,1) both}
-.status{min-height:3.2em;margin:0;text-align:center;font-weight:600;font-size:clamp(1.05rem,2.6vw,1.3rem);max-width:30ch;text-wrap:balance}
+.buzzer.nope{animation:nope .3s ease-in-out}
+@keyframes nope{0%,100%{translate:0}20%{translate:-10px 0}40%{translate:10px 0}60%{translate:-6px 0}80%{translate:6px 0}}
+@media (hover:hover){ .buzzer:not(.locked):not(.mine):hover{filter:brightness(1.06)} }
+.status{min-height:2.6em;margin:0;text-align:center;font-weight:600;font-size:clamp(1.05rem,2.6vw,1.3rem);max-width:30ch;text-wrap:balance}
 .status b{color:var(--pumpkin-text)}
 .status .hot{color:var(--pink)}
 .peek{position:fixed;right:max(16px,3vw);bottom:-10px;width:clamp(130px,12vw,200px);height:auto;transform:rotate(-6deg);filter:drop-shadow(0 12px 16px rgba(0,0,0,.5));pointer-events:none;animation:float 6s ease-in-out infinite;z-index:1}
-.keyhint{font-size:.9rem;color:var(--muted);margin:0}
+.keyhint{display:none;font-size:.9rem;color:var(--muted);margin:0}
 .keyhint kbd{font:600 .85em Poppins,sans-serif;background:var(--kbd-ghost);border:1px solid var(--line);padding:1px 7px;border-radius:6px}
-#offline{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:80;background:var(--pink);color:#fff;font-weight:600;font-size:.9rem;padding:6px 14px;border-radius:999px}
+@media (hover:hover) and (pointer:fine){ .keyhint{display:block} }
+#offline{position:fixed;top:calc(10px + env(safe-area-inset-top));left:16px;right:16px;margin-inline:auto;width:fit-content;white-space:nowrap;z-index:80;background:var(--pink);color:#fff;font-weight:600;font-size:.9rem;padding:6px 14px;border-radius:999px;box-shadow:var(--shadow)}
+body.playing .credits{display:none}
 
 @media (max-width:1000px){ .peek{display:none} }
 @media (max-width:560px){
-  .hud{grid-template-columns:minmax(0,1fr) auto;padding:14px 16px}
+  .hud{grid-template-columns:minmax(0,1fr) auto;padding:12px 16px;gap:4px 14px}
   .hud .who{grid-column:1}
   .hud .team{grid-column:1;grid-row:2}
-  .hud .score{grid-column:2;grid-row:1/3}
-  .keyhint{display:none}
+  .hud .score{grid-column:2;grid-row:1/3;padding-left:14px}
+}
+@media (max-width:400px){ .hud .long{display:none} .hud .short{display:inline} }
+/* Short phones (Safari toolbars showing, iPhone SE…) */
+@media (max-height:700px){
+  .top{margin-bottom:10px}
+  .joincard{padding-top:22px}
+  .joincard .bob{width:min(40%,150px);margin-top:-50px}
+  .joincard h1{font-size:clamp(2.6rem,11vw,5.2rem)}
+  .joincard .lead{margin-bottom:14px}
+  body:not(.playing) .credits{padding-top:12px}
+}
+/* Phones in landscape: HUD | buzzer | status side by side */
+@media (orientation:landscape) and (max-height:500px){
+  .top{margin-bottom:4px}
+  .top .name{display:none}
+  .play{flex-direction:row;justify-content:center;gap:24px}
+  .hud{width:220px;flex:none;grid-template-columns:1fr;padding:12px 16px}
+  .hud .who,.hud .team,.hud .score{grid-column:1;grid-row:auto}
+  .hud .score{text-align:left;padding:8px 0 0;border-left:0;border-top:2px solid var(--line-soft)}
+  .buzzwrap{flex:none;width:auto;flex-direction:row;gap:28px}
+  .buzzer{--size:min(64vh,40vw)}
+  @supports (height:1svh){ .buzzer{--size:min(64svh,40vw)} }
+  .status{max-width:16ch;text-align:left}
+  .joincard .bob{display:none}
+  .joincard{padding:18px 24px}
+  .joincard h1{font-size:2.6rem}
+  .joincard .lead{margin-bottom:10px}
+  .credits{display:none}
 }
 @media (prefers-reduced-motion: reduce){
-  .buzzer::before,.buzzer.mine,.joincard .bob,.peek{animation:none!important}
+  .buzzer::before,.buzzer.mine,.buzzer.nope,.joincard .bob,.peek{animation:none!important}
 }
 </style>
 </head>
@@ -85,15 +122,16 @@
 
   <!-- Join -->
   <section class="join" id="joinView" hidden>
-    <div class="card joincard">
+    <div class="card joincard" id="joinCard">
       <img class="bob" src="/assets/bob.png" alt="Bob the FPandA in a vampire cape">
-      <p class="eyebrow">Datarails Halloween · Scavenger hunt</p>
-      <h1 class="spooky">Spooky <span class="em">Buzzer</span></h1>
-      <p class="lead">Tell Bob your name and he’ll sort you into a team.</p>
-      <form id="joinForm" autocomplete="off">
+      <p class="eyebrow">Datarails Halloween&nbsp;· Scavenger hunt</p>
+      <h1 class="spooky" id="joinTitle">Spooky <span class="em">Buzzer</span></h1>
+      <p class="lead" id="joinLead">Tell Bob your name and he’ll sort you into a team.</p>
+      <form id="joinForm" autocomplete="off" novalidate>
         <label class="sr" for="name">Your name</label>
-        <input class="field" id="name" maxlength="24" placeholder="Your name" required autocomplete="given-name" enterkeyhint="go">
+        <input class="field" id="name" maxlength="24" placeholder="Your name" autocomplete="given-name" enterkeyhint="go">
         <button class="btn big" id="joinBtn">Join the hunt →</button>
+        <button class="btn ghost" type="button" id="cancelBtn" hidden>Cancel</button>
       </form>
       <p class="err" id="joinErr" aria-live="polite"></p>
     </div>
@@ -104,7 +142,7 @@
     <div class="card hud" aria-label="Your team">
       <div class="who"><span class="lbl">You</span><span class="val" id="hudName"></span></div>
       <div class="team"><span class="lbl">Your team</span><span class="val" id="hudTeam"></span></div>
-      <div class="score"><span class="lbl">Team score</span><span class="val" id="hudScore" aria-live="polite">–</span></div>
+      <div class="score"><span class="lbl"><span class="long">Team score</span><span class="short">Score</span></span><span class="val" id="hudScore" aria-live="polite">–</span></div>
     </div>
     <div class="buzzwrap">
       <button class="buzzer" id="buzzer" aria-describedby="status">
@@ -122,23 +160,40 @@
 
 <script src="/common.js"></script>
 <script>
-const POLL_MS = 1200, HIDDEN_POLL_MS = 5000;
+const POLL_MS = 1200, HIDDEN_POLL_MS = 5000, TIMEOUT_MS = 5000, OFFLINE_AFTER_MS = 4000;
 let me = store.get('bz-me');      // { id, name, team, t }
 let state = null;                 // last server state
 let fresh = 0;                    // ignore cached states older than our last action
+let stale = false;                // just came back to the tab: wait for fresh state
 let lastVerdict;                  // token of the last verdict we reacted to
+let pressedOn = null;             // buzz token we lost a race against (for "TOO SLOW")
 let lastScore = null, pending = false, lastMode = '';
 
 setupMute($('mute'));
 
-function show(view) {
+const firstName = n => String(n).split(' ')[0];
+const teamLabel = n => { const p = teamParts(n); return `${p.emoji} ${p.name}`; };
+
+function show(view, edit = false) {
   $('joinView').hidden = view !== 'join';
   $('playView').hidden = view !== 'play';
   $('leave').hidden = view !== 'play';
   $('peek').hidden = view !== 'play';
+  document.body.classList.toggle('playing', view === 'play');
   if (view === 'join') {
+    $('joinCard').classList.toggle('edit', edit);
+    $('cancelBtn').hidden = !edit;
+    $('joinTitle').innerHTML = edit ? 'Change <span class="em">name</span>' : 'Spooky <span class="em">Buzzer</span>';
+    $('joinLead').innerHTML = edit
+      ? `You’ll stay on <b>${esc(state?.teams[me.team]?.n || me.teamName || 'your team')}</b>.`
+      : 'Tell Bob your name and he’ll sort you into a team.';
+    $('joinBtn').textContent = edit ? 'Save name' : 'Join the hunt →';
+    $('joinErr').textContent = '';
     $('name').value = me?.name || store.get('bz-name', '');
-    setTimeout(() => $('name').focus(), 50);
+    // Don't pop the keyboard over everything on a phone; desktop gets focus right away.
+    if (matchMedia('(pointer:fine)').matches || edit) setTimeout(() => $('name').focus(), 50);
+  } else {
+    keepAwake();
   }
 }
 
@@ -146,21 +201,43 @@ function newId() {
   return (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)).replace(/[^A-Za-z0-9-]/g, '');
 }
 
-async function api(path, body) {
-  const res = await fetch(path, body
-    ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
-    : { cache: 'no-store' });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
-  return data;
+// Every request gets a timeout: a phone coming back from Zoom or the lock screen
+// can leave a request hanging forever otherwise.
+async function api(path, body, signal) {
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), TIMEOUT_MS);
+  signal?.addEventListener('abort', () => ac.abort());
+  try {
+    const res = await fetch(path, body
+      ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ac.signal }
+      : { cache: 'no-store', signal: ac.signal });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+    return data;
+  } catch (e) {
+    throw e.name === 'AbortError' ? new Error('The crypt is slow to answer. Try again!') : e;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
-/* ---------- join ---------- */
+// Keep the screen on while playing, so phones don't lock between items.
+let wakeLock = null;
+async function keepAwake() {
+  if (wakeLock || document.hidden || !navigator.wakeLock) return;
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => { wakeLock = null; });
+  } catch {}
+}
+
+/* ---------- join / change name ---------- */
 $('joinForm').onsubmit = async e => {
   e.preventDefault();
   audio();
   const name = $('name').value.trim();
-  if (!name) { $('joinErr').textContent = 'Bob needs a name.'; return; }
+  if (!name) { $('joinErr').textContent = 'Bob needs a name.'; $('name').focus(); return; }
+  const editing = !!me?.id;
   $('joinBtn').disabled = true;
   $('joinErr').textContent = '';
   try {
@@ -170,23 +247,26 @@ $('joinForm').onsubmit = async e => {
     fresh = r.t;
     store.set('bz-me', me);
     store.set('bz-name', r.name);
+    $('name').blur();
     show('play');
     render();
-    SFX.point();
-    toast(`Welcome to ${r.teamName}! 🎃`, 'good');
-    poll();
+    if (editing) toast(`Name changed to ${r.name} ✍️`, 'good');
+    else { SFX.point(); toast(`Welcome to ${r.teamName}! 🎃`, 'good'); }
+    poll(true);
   } catch (err) {
     $('joinErr').textContent = err.message;
   } finally {
     $('joinBtn').disabled = false;
   }
 };
-
-$('leave').onclick = () => show('join');
+$('leave').onclick = () => show('join', true);
+$('cancelBtn').onclick = () => { show('play'); render(); };
 
 /* ---------- buzz ---------- */
 async function doBuzz() {
-  if (pending || mode() !== 'ready') return;
+  if (pending) return;
+  const m = mode();
+  if (m !== 'ready') { nope(m); return; }
   audio();
   SFX.buzz();
   navigator.vibrate?.(60);
@@ -198,7 +278,7 @@ async function doBuzz() {
     if (r.result === 'unknown') { signedOut(); return; }
     if (state) state.buzz = r.buzz;
     if (r.result === 'first') { SFX.first(); flash('good'); navigator.vibrate?.([80, 60, 160]); }
-    else SFX.late();
+    else { pressedOn = r.buzz?.k; SFX.late(); }
   } catch (err) {
     toast(err.message, 'bad');
   } finally {
@@ -206,7 +286,20 @@ async function doBuzz() {
     render();
   }
 }
-$('buzzer').onclick = doBuzz;
+// Tapping a buzzer that isn't live: a little shake so it doesn't feel broken.
+function nope(m) {
+  if (m === 'mine') return;
+  const btn = $('buzzer');
+  btn.classList.remove('nope'); void btn.offsetWidth; btn.classList.add('nope');
+  navigator.vibrate?.(30);
+}
+// Buzz on touch-down, not on release: in a race every millisecond counts.
+$('buzzer').addEventListener('pointerdown', e => {
+  if (e.button !== 0) return;
+  e.preventDefault();
+  doBuzz();
+});
+$('buzzer').addEventListener('click', e => { if (e.detail === 0) doBuzz(); }); // keyboard / screen reader
 document.addEventListener('keydown', e => {
   if ($('playView').hidden || e.repeat || e.target.closest('input,button:not(#buzzer)')) return;
   if (e.code === 'Space' || e.key === 'Enter') { e.preventDefault(); doBuzz(); }
@@ -215,7 +308,7 @@ document.addEventListener('keydown', e => {
 /* ---------- state ---------- */
 function mode() {
   const b = state?.buzz;
-  if (!state) return 'wait';
+  if (!state || stale) return 'wait';
   if (!b) return 'ready';
   if (b.paused) return 'paused';
   return b.id === me?.id ? 'mine' : 'taken';
@@ -229,12 +322,19 @@ function signedOut() {
   toast('Bob reset the hunt. Join again to keep playing! 👻', '', 6000);
 }
 
+// "Your last find was approved" stays on screen until the next round, so a player who
+// switched to Zoom to show the item still finds out what happened.
+function myLastVerdict() {
+  const v = store.get('bz-myverdict');
+  return v && v.id === me.id && Date.now() - v.seenAt < 10 * 60 * 1000 ? v : null;
+}
+
 function render() {
   if (!me?.id || $('playView').hidden) return;
   const teams = state?.teams || [];
   const team = teams[me.team];
   $('hudName').textContent = me.name;
-  $('hudTeam').textContent = team?.n || me.teamName || '…';
+  $('hudTeam').textContent = teamLabel(team?.n || me.teamName || '…');
   const score = team ? team.s : null;
   const sc = $('hudScore');
   sc.textContent = score ?? '–';
@@ -244,23 +344,28 @@ function render() {
   const m = pending ? 'pending' : mode();
   const btn = $('buzzer');
   const b = state?.buzz;
+  const mv = myLastVerdict();
+  const readyLine = !mv ? 'Find the item, then hit the buzzer!'
+    : mv.v === 'a' ? '✅ Your last find was approved, +1! Hunt for the next one.'
+    : '❌ Your last find was declined. Hunt for the next one!';
   const copy = {
-    wait: ['…', 'Summoning the buzzer', 'Connecting…'],
-    ready: ['BUZZ!', 'Found it? Smash me', 'Find the item, then hit the buzzer!'],
+    wait: ['…', 'Waking up the crypt', 'Catching up…'],
+    ready: ['BUZZ!', 'Found it? Smash me', readyLine],
     pending: ['BUZZ!', 'Buzzing…', 'Buzzing…'],
-    mine: ['FIRST!', 'Show it on camera', '<span class="hot">You’re first!</span> Hold it up to your camera. Bob is judging…'],
-    taken: ['TOO SLOW', '', ''],
+    mine: ['FIRST!', 'Show it on camera', '<span class="hot">You’re first!</span> Hold it up to your Zoom camera.'],
+    taken: ['', '', ''],
     paused: ['LOCKED', 'Wait for the next item', 'Buzzers are locked. Get ready for the next item 👀'],
   }[m];
   if (m === 'taken') {
-    const t = teams[b.team]?.n || '';
-    copy[1] = `${b.name} got it`;
-    copy[2] = `👻 <b>${esc(b.name)}</b>${t ? ` (${esc(t)})` : ''} buzzed first. Hang on while Bob checks…`;
+    const t = teams[b.team]?.n;
+    copy[0] = pressedOn === b.k ? 'TOO SLOW' : 'HOLD ON';
+    copy[1] = `${firstName(b.name)} got it`;
+    copy[2] = `👻 <b>${esc(b.name)}</b>${t ? ` (${esc(teamParts(t).name)})` : ''} is showing Bob…`;
   }
   btn.className = 'buzzer' + (m === 'mine' ? ' mine' : m === 'taken' || m === 'paused' || m === 'wait' ? ' locked' : m === 'pending' ? ' pending' : '');
   if (lastMode && m !== lastMode && m !== 'pending' && lastMode !== 'pending') { btn.classList.add('flip'); setTimeout(() => btn.classList.remove('flip'), 500); }
   lastMode = m;
-  btn.disabled = m !== 'ready';
+  btn.setAttribute('aria-disabled', String(m !== 'ready'));
   $('keyhint').style.visibility = m === 'ready' ? '' : 'hidden';
   btn.setAttribute('aria-label', `${copy[0]} ${copy[1]}`.trim());
   $('bzBig').textContent = copy[0];
@@ -273,14 +378,21 @@ function onVerdict(v) {
   if (k === lastVerdict) return;
   const first = lastVerdict === undefined;
   lastVerdict = k;
-  if (!v || first || state.t - v.judgedAt > 15000) return;
-  const teamName = state.teams[v.team]?.n || 'their team';
+  if (!v) return;
+  const age = state.t - v.judgedAt;
   if (v.id === me.id) {
-    if (v.v === 'a') { toast('✅ Approved! +1 for your team 🎉', 'good', 5000); SFX.point(); flash('good'); }
+    // Your own verdict: always tell you, even if you were away in Zoom when it happened.
+    if (store.get('bz-seen') === v.k || age > 5 * 60 * 1000) return;
+    store.set('bz-seen', v.k);
+    store.set('bz-myverdict', { id: me.id, v: v.v, seenAt: Date.now() });
+    if (v.v === 'a') { toast('✅ Approved! +1 for your team 🎉', 'good', 5000); SFX.point(); flash('good'); navigator.vibrate?.([60, 40, 60]); }
     else { toast('❌ Declined. Bob wasn’t convinced. Keep hunting!', 'bad', 5000); SFX.minus(); }
-  } else if (v.v === 'a') {
+    return;
+  }
+  if (first || age > 15000) return;
+  if (v.v === 'a') {
     const ours = v.team === me.team;
-    toast(ours ? `🎉 ${v.name} scored +1 for your team!` : `🎃 ${v.name} scored for ${teamName}`, ours ? 'good' : '', 4000);
+    toast(ours ? `🎉 ${v.name} scored +1 for your team!` : `🎃 ${v.name} scored for ${teamParts(state.teams[v.team]?.n || 'their team').name}`, ours ? 'good' : '', 4000);
     if (ours) SFX.point();
   } else {
     toast(`🙅 ${v.name}’s find was declined. Buzzer is open!`, '', 3500);
@@ -290,6 +402,7 @@ function onVerdict(v) {
 function apply(s) {
   if (s.t < fresh) return; // a CDN-cached state from before our last action
   state = s;
+  stale = false;
   if (me?.id) {
     const team = s.a[me.id];
     if (team === undefined) { signedOut(); return; }
@@ -300,29 +413,49 @@ function apply(s) {
       toast(`Bob moved you to ${me.teamName} to keep the teams even 🧛`, '', 6000);
       lastScore = null;
     }
+    if (s.buzz?.k !== pressedOn) pressedOn = null;
   }
   onVerdict(s.last);
   render();
 }
 
-let pollTimer, polling = false;
-async function poll() {
+/* ---------- polling ---------- */
+let pollTimer, inflight = null, lastOk = Date.now();
+async function poll(force) {
   clearTimeout(pollTimer);
-  if (polling) return; // the request in flight schedules the next one
-  polling = true;
-  try {
-    apply(await api('/api/state'));
-    $('offline').hidden = true;
-  } catch {
-    $('offline').hidden = false;
-  } finally {
-    polling = false;
-    if (me?.id) pollTimer = setTimeout(poll, document.hidden ? HIDDEN_POLL_MS : POLL_MS);
+  if (inflight) {
+    if (!force) return; // the request in flight schedules the next one
+    inflight.abort();
   }
+  const ac = inflight = new AbortController();
+  try {
+    apply(await api('/api/state', null, ac.signal));
+    lastOk = Date.now();
+  } catch {}
+  if (inflight !== ac) return; // replaced by a forced poll
+  inflight = null;
+  updateOffline();
+  if (me?.id) pollTimer = setTimeout(poll, document.hidden ? HIDDEN_POLL_MS : POLL_MS);
 }
-document.addEventListener('visibilitychange', () => { if (!document.hidden && me?.id) poll(); });
+function updateOffline() {
+  $('offline').hidden = !me?.id || document.hidden || Date.now() - lastOk < OFFLINE_AFTER_MS;
+}
+setInterval(updateOffline, 1000);
 
-if (me?.id) { show('play'); render(); poll(); }
+// Back from Zoom / the lock screen: show "catching up" until fresh state arrives.
+function wake() {
+  if (document.hidden || !me?.id) return;
+  stale = true;
+  lastOk = Date.now();
+  render();
+  poll(true);
+  keepAwake();
+}
+document.addEventListener('visibilitychange', wake);
+addEventListener('pageshow', e => { if (e.persisted) wake(); });
+addEventListener('online', wake);
+
+if (me?.id) { show('play'); render(); poll(true); }
 else show('join');
 </script>
 </body>
