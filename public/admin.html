@@ -138,7 +138,7 @@
 
 <script src="/common.js"></script>
 <script>
-const POLL_MS = 700;
+const POLL_MS = 1000, HIDDEN_POLL_MS = 5000;
 let key = store.get('bz-admin', '');
 let state = null, lastBuzzKey = null, busy = false, pollTimer, polling = false;
 
@@ -384,9 +384,11 @@ async function poll() {
     $('offline').hidden = false;
   } finally {
     polling = false;
-    if (key) pollTimer = setTimeout(poll, POLL_MS);
+    if (key) pollTimer = setTimeout(poll, document.hidden ? HIDDEN_POLL_MS : POLL_MS);
   }
 }
+
+document.addEventListener('visibilitychange', () => { if (!document.hidden && key) poll(); });
 
 if (key) {
   show('admin');

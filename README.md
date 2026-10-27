@@ -10,7 +10,13 @@ The first buzz is decided atomically in Redis, so if two people hit it at the sa
 ## Deploy on Vercel (about 5 minutes)
 
 1. **Import the repo**: Vercel → *Add New… → Project* → pick this repo. Framework preset: **Other**. No build command needed.
-2. **Add a database**: in the project, open **Storage → Create Database → Upstash (Redis)** (free plan is fine) and connect it to the project. This adds the `KV_REST_API_URL` / `KV_REST_API_TOKEN` (or `UPSTASH_REDIS_REST_*`) env vars for you.
+2. **Add a free Redis database**. The simplest way is to create it on Upstash directly:
+   1. Sign up at [console.upstash.com](https://console.upstash.com) (free, no card).
+   2. **Create Database** → type **Redis**, pick the region closest to your Vercel functions (default `us-east-1`), plan **Free**.
+   3. On the database page, under **REST API**, copy `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`.
+   4. In Vercel: *Settings → Environment Variables* → add both with exactly those names.
+
+   (If you'd rather go through Vercel, *Storage → Create Database → Upstash for Redis* creates the same database and adds the env vars for you. Each Upstash account gets **one** free database. If you see only paid plans there, that account already has one: use the direct route above with a different login.)
 3. **Set the host password**: *Settings → Environment Variables* → add `ADMIN_PASSWORD` with a password only you know.
 4. **Redeploy** (*Deployments → ⋯ → Redeploy*) so the new env vars are picked up.
 
@@ -39,14 +45,14 @@ Then:
 - `api/`: Vercel functions: `state` (public state), `join`, `buzz`, `admin` (password protected).
 - `lib/game.js`: game logic. Joining, buzzing and judging are Lua scripts, so each one runs atomically in Redis.
 
-Players poll `/api/state` about once a second. Vercel's CDN caches that response for one second, so the database only gets about one read per second however many people are playing. When you buzz, the result comes straight back from the server. The admin page polls without the cache.
+Players poll `/api/state` about once a second. Vercel's CDN and the function itself share one database read per second, so the load doesn't grow with the number of players. When you buzz, the result comes straight back from the server. With the admin page open, a live game uses about 40k Redis commands an hour. That's well inside Upstash's free 500K commands a month, so close the admin tab when you're not playing.
 
 ## Local development
 
 ```bash
 # .env.local
-KV_REST_API_URL=...        # from your Upstash database
-KV_REST_API_TOKEN=...
+UPSTASH_REDIS_REST_URL=...    # from your Upstash database
+UPSTASH_REDIS_REST_TOKEN=...
 ADMIN_PASSWORD=boo
 
 npm run dev   # http://localhost:3000 and http://localhost:3000/admin
