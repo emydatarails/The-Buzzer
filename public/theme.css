@@ -1,0 +1,114 @@
+/* Spooky Sheet theme — tokens, fonts and backdrop taken from the main Halloween game. */
+@font-face{font-family:"Creepster";font-style:normal;font-weight:400;font-display:swap;src:url(/assets/creepster-400.woff2) format("woff2")}
+@font-face{font-family:"Poppins";font-style:normal;font-weight:400;font-display:swap;src:url(/assets/poppins-400.woff2) format("woff2")}
+@font-face{font-family:"Poppins";font-style:normal;font-weight:600;font-display:swap;src:url(/assets/poppins-600.woff2) format("woff2")}
+@font-face{font-family:"Poppins";font-style:normal;font-weight:700;font-display:swap;src:url(/assets/poppins-700.woff2) format("woff2")}
+
+:root{
+  --navy:#0C142B; --orange:#FDA111; --pink:#F73476; --cream:#FFF9F1;
+  --bg:#080D20; --bg2:#0C142B; --ink:#FFF9F1; --muted:#B9C1D6; --surface:#121A3E; --surface2:#1A2352;
+  --line:rgba(255,255,255,.18); --line-soft:rgba(255,255,255,.10);
+  --pumpkin:#FDA111; --pumpkin-text:#FDA111; --glow:#FFB347; --good:#79C996;
+  --shadow:0 16px 50px rgba(0,0,0,.5); --fog:rgba(253,161,17,.12);
+  --kbd-bg:rgba(12,20,43,.18); --kbd-ghost:rgba(255,255,255,.12);
+  box-sizing:border-box; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;min-height:100dvh;background-color:var(--bg);color:var(--ink);
+  font-family:Poppins,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:18px;line-height:1.5;
+  background-image:radial-gradient(1300px 760px at 50% -12%, var(--fog), transparent 70%),linear-gradient(180deg,var(--bg2),var(--bg));
+  background-repeat:no-repeat;background-attachment:fixed;background-size:100% 100%;overflow-x:hidden}
+.spooky{font-family:Creepster,Poppins,system-ui,sans-serif;font-weight:400;letter-spacing:.02em;line-height:1.1}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+button,input{font-family:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--glow);outline-offset:3px}
+
+/* ---------- Backdrop: moon, fog, embers, bats, candle vignette ---------- */
+.backdrop{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.moon{position:absolute;top:9vh;right:4vw;width:clamp(70px,7vw,130px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 38% 36%,#FFF7E0 0%,#F3DCA3 55%,#D9B66F 100%);
+  box-shadow:0 0 70px 26px rgba(255,236,180,.22),0 0 160px 60px rgba(253,161,17,.10);opacity:.85}
+.moon::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 70% 60%,rgba(0,0,0,.08) 0 10%,transparent 12%),radial-gradient(circle at 30% 70%,rgba(0,0,0,.07) 0 7%,transparent 9%)}
+.fog{position:absolute;left:-25%;right:-25%;bottom:-12%;height:60vh;mix-blend-mode:screen;
+  background:radial-gradient(ellipse at 50% 100%, var(--fog), transparent 62%);animation:fogdrift 40s ease-in-out infinite alternate}
+.fog.f2{bottom:-20%;height:50vh;animation-duration:55s;animation-delay:-20s;opacity:.7;background:radial-gradient(ellipse at 30% 100%, rgba(247,52,118,.10), transparent 60%)}
+@keyframes fogdrift{from{transform:translateX(-6%)}to{transform:translateX(6%)}}
+.embers i{position:absolute;bottom:-20px;width:6px;height:6px;border-radius:50%;background:var(--pumpkin);filter:blur(1px);opacity:0;animation:ember 14s linear infinite}
+@keyframes ember{0%{transform:translateY(0) translateX(0);opacity:0}10%{opacity:.6}50%{transform:translateY(-55vh) translateX(30px);opacity:.45}100%{transform:translateY(-110vh) translateX(-20px);opacity:0}}
+.bats svg{position:absolute;width:64px;height:40px;fill:#02040c;opacity:.55;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));animation:bat 24s linear infinite}
+.bats svg path{transform-origin:50% 50%;animation:flap .5s ease-in-out infinite alternate}
+@keyframes flap{from{transform:scaleY(1)}to{transform:scaleY(.55)}}
+@keyframes bat{0%{transform:translate(-10vw,10vh) rotate(6deg)}25%{transform:translate(20vw,4vh) rotate(-8deg)}50%{transform:translate(50vw,12vh) rotate(5deg)}75%{transform:translate(80vw,2vh) rotate(-6deg)}100%{transform:translate(112vw,9vh) rotate(4deg)}}
+@keyframes bat2{0%{transform:translate(112vw,88vh) rotate(-6deg)}30%{transform:translate(70vw,92vh) rotate(8deg)}60%{transform:translate(30vw,84vh) rotate(-5deg)}100%{transform:translate(-12vw,90vh) rotate(5deg)}}
+.vignette{position:absolute;inset:0;box-shadow:inset 0 0 240px 50px rgba(0,0,0,.62);animation:flicker 3.2s ease-in-out infinite}
+@keyframes flicker{0%,100%{opacity:.86}30%{opacity:1}55%{opacity:.9}80%{opacity:.97}}
+#flash{position:fixed;inset:0;background:var(--pink);opacity:0;pointer-events:none;z-index:40}
+#flash.on{animation:flash .35s ease-out}
+#flash.good{background:var(--pumpkin)}
+@keyframes flash{0%{opacity:.6}100%{opacity:0}}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1400px;margin:0 auto;padding:16px 32px 24px;position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:14px;margin:0;min-width:0}
+.brand img{height:22px;width:auto;display:block;flex:none}
+.brand .name{font-size:1.6rem;color:var(--pumpkin-text);line-height:1;white-space:nowrap}
+.topctl{display:flex;gap:8px;flex:none}
+.iconbtn{width:46px;height:46px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font-size:21px;line-height:1;cursor:pointer;display:grid;place-items:center;transition:transform .1s,background .15s;box-shadow:var(--shadow)}
+.iconbtn:hover{background:var(--surface2);transform:translateY(-1px)}
+.iconbtn:active{transform:scale(.94)}
+.iconbtn.off{opacity:.45;filter:grayscale(1)}
+.eyebrow{font-weight:600;font-size:1.05rem;letter-spacing:.02em;color:var(--pumpkin-text);margin:0 0 8px}
+.small{font-size:.95rem;color:var(--muted)}
+.credits{margin-top:auto;padding-top:24px;text-align:center;font-size:.9rem;color:var(--muted)}
+
+/* ---------- Buttons ---------- */
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;justify-content:center;align-items:center}
+.btn{font:inherit;font-weight:600;font-size:1.1rem;padding:14px 26px;border-radius:999px;cursor:pointer;border:2px solid var(--pumpkin);background:var(--pumpkin);color:var(--navy);
+  transition:transform .12s,filter .15s,box-shadow .15s,background .15s;box-shadow:0 8px 24px rgba(253,161,17,.25);display:inline-flex;align-items:center;justify-content:center;gap:10px;line-height:1.2}
+.btn:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 12px 30px rgba(253,161,17,.35)}
+.btn:active{transform:scale(.96)}
+.btn.big{font-size:1.35rem;padding:18px 34px}
+.btn.sm{font-size:.95rem;padding:9px 16px}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn.ghost:hover{background:var(--line-soft);box-shadow:none}
+.btn.pink{background:var(--pink);border-color:var(--pink);color:#fff;box-shadow:0 8px 24px rgba(247,52,118,.3)}
+.btn.good{background:var(--good);border-color:var(--good);color:var(--navy);box-shadow:0 8px 24px rgba(121,201,150,.3)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none;filter:none;box-shadow:none}
+.btn kbd{font:600 .72em Poppins,sans-serif;background:var(--kbd-bg);padding:3px 8px;border-radius:7px;letter-spacing:.02em}
+.btn.ghost kbd{background:var(--kbd-ghost)}
+
+/* ---------- Cards, inputs, toasts ---------- */
+.card{background:var(--surface);border:2px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow);position:relative}
+.card h2{margin:0 0 4px;font-size:2rem;color:var(--pumpkin-text)}
+.field{font:inherit;font-size:1.2rem;font-weight:600;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:16px;padding:14px 18px;width:100%;min-width:0;transition:border-color .15s}
+.field:focus{border-color:var(--pumpkin);outline:none}
+.field::placeholder{color:var(--muted);font-weight:400}
+.err{color:var(--pink);font-weight:600;min-height:1.4em;margin:8px 0 0}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:16px;padding:12px 18px;box-shadow:var(--shadow);z-index:70;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;font-weight:600;max-width:min(92vw,620px);text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.toast.good{border-color:var(--good)}
+.toast.bad{border-color:var(--pink)}
+dialog{border:2px solid var(--line);border-radius:24px;background:var(--surface);color:var(--ink);padding:28px 30px;max-width:min(92vw,520px);box-shadow:0 30px 80px rgba(0,0,0,.6);font-family:inherit}
+dialog::backdrop{background:rgba(6,10,26,.72);backdrop-filter:blur(4px)}
+dialog h2{margin:0 0 8px;font-size:2rem;color:var(--pumpkin-text)}
+dialog p{margin:0 0 18px;color:var(--muted);font-size:1.05rem}
+dialog .row{justify-content:flex-end;margin-top:6px}
+
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(1.6)}100%{transform:scale(1)}}
+@keyframes unmask{0%{filter:blur(14px);transform:scale(.8);letter-spacing:.3em;opacity:0}60%{opacity:1}100%{filter:blur(0);transform:scale(1);letter-spacing:.02em;opacity:1}}
+
+@media (max-width:760px){
+  .wrap{padding:12px 16px 20px}
+  .brand .name{font-size:1.3rem}
+  .brand img{display:none}
+  .iconbtn{width:40px;height:40px;font-size:18px;border-radius:12px}
+}
+@media (prefers-reduced-motion: reduce){
+  .backdrop *,.bob{animation:none!important}
+  .btn,.iconbtn{transition:none}
+}
