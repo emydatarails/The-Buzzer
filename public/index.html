@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080D20">
+<title>Spooky Buzzer · Datarails Halloween</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎃</text></svg>">
+<link rel="preload" href="/assets/creepster-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/theme.css">
+<style>
+/* ---------- Join ---------- */
+.join{flex:1;display:grid;place-items:center;padding:10px 0 20px}
+.joincard{width:min(100%,520px);text-align:center;padding:30px clamp(20px,4vw,40px) 30px;animation:fadein .35s both}
+.joincard .bob{width:min(58%,230px);height:auto;margin:-90px auto 0;display:block;filter:drop-shadow(0 18px 22px rgba(0,0,0,.45));animation:float 5s ease-in-out infinite}
+.joincard h1{font-size:clamp(3.4rem,13vw,5.2rem);line-height:.95;margin:6px 0 4px;text-shadow:0 6px 0 rgba(253,161,17,.22),0 0 60px rgba(253,161,17,.18)}
+.joincard h1 .em{color:var(--pumpkin)}
+.joincard .lead{color:var(--muted);margin:6px 0 20px;font-size:1.05rem}
+.joincard form{display:flex;flex-direction:column;gap:12px}
+.joincard .btn{width:100%}
+
+/* ---------- Play ---------- */
+.play{flex:1;display:flex;flex-direction:column;align-items:center;gap:clamp(18px,4vh,40px);animation:fadein .35s both}
+.hud{width:min(100%,760px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) auto;gap:6px 18px;align-items:center;padding:16px 22px}
+.hud .lbl{display:block;font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);line-height:1.2}
+.hud .val{display:block;font-weight:700;font-size:clamp(1.05rem,2.4vw,1.35rem);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hud .team .val{color:var(--pumpkin-text)}
+.hud .score{text-align:right;padding-left:18px;border-left:2px solid var(--line-soft)}
+.hud .score .val{font-family:Creepster,Poppins,sans-serif;font-weight:400;font-size:clamp(2.6rem,7vw,3.4rem);line-height:1;color:var(--ink);overflow:visible;font-variant-numeric:tabular-nums}
+.hud .score .val.pop{animation:pop .4s cubic-bezier(.2,1.4,.5,1);color:var(--pink)}
+
+.buzzwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;width:100%}
+.buzzer{--size:min(76vw,52vh,380px);position:relative;width:var(--size);height:var(--size);border-radius:50%;border:0;cursor:pointer;padding:0;
+  display:grid;place-items:center;color:var(--navy);-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;
+  background:radial-gradient(circle at 36% 30%,#FFD27A 0%,#FDA111 45%,#D9770A 100%);
+  box-shadow:0 18px 0 #9C4F05,0 26px 50px rgba(0,0,0,.55),inset 0 -16px 30px rgba(0,0,0,.18),inset 0 12px 24px rgba(255,255,255,.35);
+  transition:transform .08s,box-shadow .08s,filter .2s}
+.buzzer::before{content:"";position:absolute;inset:-18px;border-radius:50%;border:6px solid rgba(253,161,17,.55);animation:halo 1.6s ease-out infinite;pointer-events:none}
+@keyframes halo{0%{transform:scale(.94);opacity:.9}100%{transform:scale(1.14);opacity:0}}
+.buzzer .face{display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none}
+.buzzer .big{font-family:Creepster,Poppins,sans-serif;font-size:calc(var(--size) * .27);line-height:.9;letter-spacing:.02em;text-shadow:0 3px 0 rgba(255,255,255,.35)}
+.buzzer .sub{font-weight:700;font-size:calc(var(--size) * .055);opacity:.8;max-width:80%;line-height:1.2}
+.buzzer:hover{filter:brightness(1.06)}
+.buzzer:active,.buzzer.pending{transform:translateY(14px);box-shadow:0 4px 0 #9C4F05,0 10px 26px rgba(0,0,0,.5),inset 0 -10px 24px rgba(0,0,0,.22),inset 0 10px 20px rgba(255,255,255,.3)}
+.buzzer.mine{background:radial-gradient(circle at 36% 30%,#FF8DB3 0%,#F73476 50%,#B0164D 100%);color:#fff;transform:translateY(14px);
+  box-shadow:0 4px 0 #7A0E34,0 0 80px 20px rgba(247,52,118,.55),inset 0 -10px 24px rgba(0,0,0,.22),inset 0 10px 20px rgba(255,255,255,.3);cursor:default;animation:wobble .5s ease-in-out infinite alternate}
+.buzzer.mine::before{border-color:rgba(247,52,118,.7)}
+.buzzer.mine .big{text-shadow:0 3px 0 rgba(0,0,0,.25)}
+@keyframes wobble{from{rotate:-2deg}to{rotate:2deg}}
+.buzzer.locked{background:radial-gradient(circle at 36% 30%,#3A4577 0%,#1A2352 60%,#121A3E 100%);color:var(--muted);cursor:not-allowed;filter:none;transform:translateY(14px);
+  box-shadow:0 4px 0 #0A1028,0 10px 26px rgba(0,0,0,.5),inset 0 -10px 24px rgba(0,0,0,.25),inset 0 10px 20px rgba(255,255,255,.06)}
+.buzzer.locked::before{display:none}
+.buzzer.locked .big{text-shadow:none;font-size:calc(var(--size) * .2)}
+.buzzer.flip .face{animation:unmask .5s cubic-bezier(.2,.8,.2,1) both}
+.status{min-height:3.2em;margin:0;text-align:center;font-weight:600;font-size:clamp(1.05rem,2.6vw,1.3rem);max-width:30ch;text-wrap:balance}
+.status b{color:var(--pumpkin-text)}
+.status .hot{color:var(--pink)}
+.peek{position:fixed;right:max(16px,3vw);bottom:-10px;width:clamp(130px,12vw,200px);height:auto;transform:rotate(-6deg);filter:drop-shadow(0 12px 16px rgba(0,0,0,.5));pointer-events:none;animation:float 6s ease-in-out infinite;z-index:1}
+.keyhint{font-size:.9rem;color:var(--muted);margin:0}
+.keyhint kbd{font:600 .85em Poppins,sans-serif;background:var(--kbd-ghost);border:1px solid var(--line);padding:1px 7px;border-radius:6px}
+#offline{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:80;background:var(--pink);color:#fff;font-weight:600;font-size:.9rem;padding:6px 14px;border-radius:999px}
+
+@media (max-width:1000px){ .peek{display:none} }
+@media (max-width:560px){
+  .hud{grid-template-columns:minmax(0,1fr) auto;padding:14px 16px}
+  .hud .who{grid-column:1}
+  .hud .team{grid-column:1;grid-row:2}
+  .hud .score{grid-column:2;grid-row:1/3}
+  .keyhint{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  .buzzer::before,.buzzer.mine,.joincard .bob,.peek{animation:none!important}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <p class="brand"><img src="/assets/datarails.svg" alt="Datarails" width="96" height="22"><span class="name spooky">Spooky Sheet 🎃</span></p>
+    <div class="topctl">
+      <button class="iconbtn" id="mute" title="Sound on / off"></button>
+      <button class="iconbtn" id="leave" title="Change name" aria-label="Change name" hidden>✎</button>
+    </div>
+  </header>
+
+  <!-- Join -->
+  <section class="join" id="joinView" hidden>
+    <div class="card joincard">
+      <img class="bob" src="/assets/bob.png" alt="Bob the FPandA in a vampire cape">
+      <p class="eyebrow">Datarails Halloween · Scavenger hunt</p>
+      <h1 class="spooky">Spooky <span class="em">Buzzer</span></h1>
+      <p class="lead">Tell Bob your name and he’ll sort you into a team.</p>
+      <form id="joinForm" autocomplete="off">
+        <label class="sr" for="name">Your name</label>
+        <input class="field" id="name" maxlength="24" placeholder="Your name" required autocomplete="given-name" enterkeyhint="go">
+        <button class="btn big" id="joinBtn">Join the hunt →</button>
+      </form>
+      <p class="err" id="joinErr" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- Play -->
+  <section class="play" id="playView" hidden>
+    <div class="card hud" aria-label="Your team">
+      <div class="who"><span class="lbl">You</span><span class="val" id="hudName"></span></div>
+      <div class="team"><span class="lbl">Your team</span><span class="val" id="hudTeam"></span></div>
+      <div class="score"><span class="lbl">Team score</span><span class="val" id="hudScore" aria-live="polite">–</span></div>
+    </div>
+    <div class="buzzwrap">
+      <button class="buzzer" id="buzzer" aria-describedby="status">
+        <span class="face"><span class="big" id="bzBig">BUZZ!</span><span class="sub" id="bzSub">Found it? Smash me</span></span>
+      </button>
+      <p class="status" id="status" aria-live="polite">Find the item, then hit the buzzer!</p>
+      <p class="keyhint" id="keyhint">or press <kbd>Space</kbd></p>
+    </div>
+  </section>
+
+  <p class="credits">Datarails · Halloween 2026 · Bob says: know your sheet.</p>
+</main>
+<img class="peek" id="peek" src="/assets/bob.png" alt="" aria-hidden="true" hidden>
+<div id="offline" hidden>Reconnecting to the crypt…</div>
+
+<script src="/common.js"></script>
+<script>
+const POLL_MS = 1200, HIDDEN_POLL_MS = 5000;
+let me = store.get('bz-me');      // { id, name, team, t }
+let state = null;                 // last server state
+let fresh = 0;                    // ignore cached states older than our last action
+let lastVerdict;                  // token of the last verdict we reacted to
+let lastScore = null, pending = false, lastMode = '';
+
+setupMute($('mute'));
+
+function show(view) {
+  $('joinView').hidden = view !== 'join';
+  $('playView').hidden = view !== 'play';
+  $('leave').hidden = view !== 'play';
+  $('peek').hidden = view !== 'play';
+  if (view === 'join') {
+    $('name').value = me?.name || store.get('bz-name', '');
+    setTimeout(() => $('name').focus(), 50);
+  }
+}
+
+function newId() {
+  return (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)).replace(/[^A-Za-z0-9-]/g, '');
+}
+
+async function api(path, body) {
+  const res = await fetch(path, body
+    ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+    : { cache: 'no-store' });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+  return data;
+}
+
+/* ---------- join ---------- */
+$('joinForm').onsubmit = async e => {
+  e.preventDefault();
+  audio();
+  const name = $('name').value.trim();
+  if (!name) { $('joinErr').textContent = 'Bob needs a name.'; return; }
+  $('joinBtn').disabled = true;
+  $('joinErr').textContent = '';
+  try {
+    const id = me?.id || newId();
+    const r = await api('/api/join', { id, name });
+    me = { id, name: r.name, team: r.team, teamName: r.teamName, t: r.t };
+    fresh = r.t;
+    store.set('bz-me', me);
+    store.set('bz-name', r.name);
+    show('play');
+    render();
+    SFX.point();
+    toast(`Welcome to ${r.teamName}! 🎃`, 'good');
+    poll();
+  } catch (err) {
+    $('joinErr').textContent = err.message;
+  } finally {
+    $('joinBtn').disabled = false;
+  }
+};
+
+$('leave').onclick = () => show('join');
+
+/* ---------- buzz ---------- */
+async function doBuzz() {
+  if (pending || mode() !== 'ready') return;
+  audio();
+  SFX.buzz();
+  navigator.vibrate?.(60);
+  pending = true;
+  render();
+  try {
+    const r = await api('/api/buzz', { id: me.id });
+    fresh = r.t;
+    if (r.result === 'unknown') { signedOut(); return; }
+    if (state) state.buzz = r.buzz;
+    if (r.result === 'first') { SFX.first(); flash('good'); navigator.vibrate?.([80, 60, 160]); }
+    else SFX.late();
+  } catch (err) {
+    toast(err.message, 'bad');
+  } finally {
+    pending = false;
+    render();
+  }
+}
+$('buzzer').onclick = doBuzz;
+document.addEventListener('keydown', e => {
+  if ($('playView').hidden || e.repeat || e.target.closest('input,button:not(#buzzer)')) return;
+  if (e.code === 'Space' || e.key === 'Enter') { e.preventDefault(); doBuzz(); }
+});
+
+/* ---------- state ---------- */
+function mode() {
+  const b = state?.buzz;
+  if (!state) return 'wait';
+  if (!b) return 'ready';
+  if (b.paused) return 'paused';
+  return b.id === me?.id ? 'mine' : 'taken';
+}
+
+function signedOut() {
+  const name = me?.name;
+  store.del('bz-me');
+  me = { name };
+  show('join');
+  toast('Bob reset the hunt. Join again to keep playing! 👻', '', 6000);
+}
+
+function render() {
+  if (!me?.id || $('playView').hidden) return;
+  const teams = state?.teams || [];
+  const team = teams[me.team];
+  $('hudName').textContent = me.name;
+  $('hudTeam').textContent = team?.n || me.teamName || '…';
+  const score = team ? team.s : null;
+  const sc = $('hudScore');
+  sc.textContent = score ?? '–';
+  if (lastScore != null && score > lastScore) { sc.classList.remove('pop'); void sc.offsetWidth; sc.classList.add('pop'); }
+  if (score != null) lastScore = score;
+
+  const m = pending ? 'pending' : mode();
+  const btn = $('buzzer');
+  const b = state?.buzz;
+  const copy = {
+    wait: ['…', 'Summoning the buzzer', 'Connecting…'],
+    ready: ['BUZZ!', 'Found it? Smash me', 'Find the item, then hit the buzzer!'],
+    pending: ['BUZZ!', 'Buzzing…', 'Buzzing…'],
+    mine: ['FIRST!', 'Show it on camera', '<span class="hot">You’re first!</span> Hold it up to your camera. Bob is judging…'],
+    taken: ['TOO SLOW', '', ''],
+    paused: ['LOCKED', 'Wait for the next item', 'Buzzers are locked. Get ready for the next item 👀'],
+  }[m];
+  if (m === 'taken') {
+    const t = teams[b.team]?.n || '';
+    copy[1] = `${b.name} got it`;
+    copy[2] = `👻 <b>${esc(b.name)}</b>${t ? ` (${esc(t)})` : ''} buzzed first. Hang on while Bob checks…`;
+  }
+  btn.className = 'buzzer' + (m === 'mine' ? ' mine' : m === 'taken' || m === 'paused' || m === 'wait' ? ' locked' : m === 'pending' ? ' pending' : '');
+  if (lastMode && m !== lastMode && m !== 'pending' && lastMode !== 'pending') { btn.classList.add('flip'); setTimeout(() => btn.classList.remove('flip'), 500); }
+  lastMode = m;
+  btn.disabled = m !== 'ready';
+  $('keyhint').style.visibility = m === 'ready' ? '' : 'hidden';
+  btn.setAttribute('aria-label', `${copy[0]} ${copy[1]}`.trim());
+  $('bzBig').textContent = copy[0];
+  $('bzSub').textContent = copy[1];
+  $('status').innerHTML = copy[2];
+}
+
+function onVerdict(v) {
+  const k = v?.k ?? null;
+  if (k === lastVerdict) return;
+  const first = lastVerdict === undefined;
+  lastVerdict = k;
+  if (!v || first || state.t - v.judgedAt > 15000) return;
+  const teamName = state.teams[v.team]?.n || 'their team';
+  if (v.id === me.id) {
+    if (v.v === 'a') { toast('✅ Approved! +1 for your team 🎉', 'good', 5000); SFX.point(); flash('good'); }
+    else { toast('❌ Declined. Bob wasn’t convinced. Keep hunting!', 'bad', 5000); SFX.minus(); }
+  } else if (v.v === 'a') {
+    const ours = v.team === me.team;
+    toast(ours ? `🎉 ${v.name} scored +1 for your team!` : `🎃 ${v.name} scored for ${teamName}`, ours ? 'good' : '', 4000);
+    if (ours) SFX.point();
+  } else {
+    toast(`🙅 ${v.name}’s find was declined. Buzzer is open!`, '', 3500);
+  }
+}
+
+function apply(s) {
+  if (s.t < fresh) return; // a CDN-cached state from before our last action
+  state = s;
+  if (me?.id) {
+    const team = s.a[me.id];
+    if (team === undefined) { signedOut(); return; }
+    if (team !== me.team) {
+      me.team = team;
+      me.teamName = s.teams[team]?.n;
+      store.set('bz-me', me);
+      toast(`Bob moved you to ${me.teamName} to keep the teams even 🧛`, '', 6000);
+      lastScore = null;
+    }
+  }
+  onVerdict(s.last);
+  render();
+}
+
+let pollTimer, polling = false;
+async function poll() {
+  clearTimeout(pollTimer);
+  if (polling) return; // the request in flight schedules the next one
+  polling = true;
+  try {
+    apply(await api('/api/state'));
+    $('offline').hidden = true;
+  } catch {
+    $('offline').hidden = false;
+  } finally {
+    polling = false;
+    if (me?.id) pollTimer = setTimeout(poll, document.hidden ? HIDDEN_POLL_MS : POLL_MS);
+  }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && me?.id) poll(); });
+
+if (me?.id) { show('play'); render(); poll(); }
+else show('join');
+</script>
+</body>
+</html>

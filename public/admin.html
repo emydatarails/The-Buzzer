@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#080D20">
+<title>Buzzer Host · Spooky Sheet</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧛</text></svg>">
+<link rel="stylesheet" href="/theme.css">
+<style>
+.login{flex:1;display:grid;place-items:center}
+.login .card{width:min(100%,460px);text-align:center}
+.login form{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+
+.grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(360px,.75fr);gap:24px;align-items:start}
+.joinurl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin:0 0 18px;font-weight:600;color:var(--muted)}
+.joinurl code{font:700 1.05rem Poppins,sans-serif;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:6px 12px;word-break:break-all}
+
+/* ---------- Buzz panel ---------- */
+.buzzcard{min-height:430px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.buzzcard.hot{border-color:var(--pink);box-shadow:0 0 0 4px rgba(247,52,118,.18),0 0 80px rgba(247,52,118,.25),var(--shadow)}
+.idle .bob{width:clamp(150px,14vw,210px);height:auto;filter:drop-shadow(0 16px 20px rgba(0,0,0,.45));animation:float 6s ease-in-out infinite}
+.idle h2,.paused h2{font-size:clamp(2.2rem,4vw,3.2rem);margin:8px 0 2px}
+.idle p,.paused p{margin:0 0 6px;color:var(--muted)}
+.paused .lock{font-size:5rem;line-height:1}
+.hotbox .tag{font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pink);font-size:1rem}
+.hotbox .who{font-family:Creepster,Poppins,sans-serif;font-size:clamp(3.6rem,8vw,7rem);line-height:1;color:var(--ink);text-shadow:0 0 40px rgba(247,52,118,.5);animation:unmask .7s cubic-bezier(.2,.8,.2,1) both;overflow-wrap:anywhere;margin:6px 0}
+.hotbox .team{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:clamp(1.2rem,2vw,1.6rem);background:var(--surface2);border:2px solid var(--line);border-radius:999px;padding:6px 18px 6px 8px}
+.hotbox .team b{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--pumpkin);font-size:1.3rem}
+.hotbox .ago{color:var(--muted);margin:10px 0 0;font-weight:600}
+.hotbox .row{margin-top:22px}
+.hotbox .btn{min-width:200px}
+.log{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.log li{display:flex;gap:10px;align-items:center;background:var(--surface);border:2px solid var(--line-soft);border-radius:14px;padding:8px 14px;font-size:.95rem}
+.log li .v{flex:none;font-size:1.1rem}
+.log li .t{margin-left:auto;color:var(--muted);font-size:.85rem;white-space:nowrap}
+.log li span.n{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sectionh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:22px 4px 0}
+.sectionh h3{margin:0;font-size:1.1rem}
+
+/* ---------- Scoreboard ---------- */
+.board h2{font-size:2.4rem}
+.team{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:10px 6px 10px 40px;border-top:2px solid var(--line-soft);border-radius:12px;position:relative}
+.team:first-of-type{border-top:0}
+.team.lead{box-shadow:inset 5px 0 0 var(--pumpkin);background:rgba(253,161,17,.07)}
+.team .crown{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:1.4rem;visibility:hidden}
+.team.lead .crown{visibility:visible}
+.team input{font:inherit;font-weight:600;font-size:1.1rem;border:2px solid transparent;background:transparent;color:var(--ink);padding:4px 8px;border-radius:10px;min-width:0;width:100%;text-overflow:ellipsis}
+.team input:hover{border-color:var(--line)}
+.team input:focus{background:var(--bg);border-color:var(--pumpkin);outline:none}
+.team .meta{grid-column:1;font-size:.85rem;color:var(--muted);padding-left:10px;margin-top:-8px}
+.team .pts{grid-column:2;grid-row:1/3;font-weight:700;font-size:2.6rem;min-width:1.5ch;text-align:right;font-variant-numeric:tabular-nums;line-height:1}
+.team.lead .pts{color:var(--pink)}
+.team .ctl{grid-column:3;grid-row:1/3;display:flex;gap:6px}
+.sq{font:inherit;font-weight:700;font-size:1.3rem;width:42px;height:42px;border-radius:12px;border:2px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;display:grid;place-items:center;line-height:1;transition:background .15s,transform .1s}
+.sq:hover{background:var(--line-soft)}
+.sq:active{transform:scale(.92)}
+.sq.plus{background:var(--pumpkin);border-color:var(--pumpkin);color:var(--navy)}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:14px}
+
+/* ---------- Players ---------- */
+.players{margin-top:24px}
+.players h2{font-size:2rem}
+.pgroups{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:10px}
+.pgroup h4{margin:0 0 6px;font-size:1rem;color:var(--pumpkin-text);display:flex;justify-content:space-between;gap:8px}
+.pgroup ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;max-height:320px;overflow:auto}
+.pgroup li{display:flex;align-items:center;gap:6px;background:var(--surface2);border-radius:10px;padding:4px 4px 4px 12px;font-size:.95rem}
+.pgroup li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pgroup li button{flex:none;width:28px;height:28px;border-radius:50%;border:0;background:transparent;color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1}
+.pgroup li button:hover{background:rgba(247,52,118,.2);color:var(--pink)}
+.pgroup .empty{color:var(--muted);font-size:.9rem;padding:4px 0}
+.hint{font-size:.9rem;color:var(--muted);text-align:center;margin:12px 0 0}
+.hint kbd{font:600 .85em Poppins,sans-serif;background:var(--kbd-ghost);border:1px solid var(--line);padding:1px 7px;border-radius:6px;margin:0 2px}
+#offline{color:var(--pink);font-weight:600;font-size:.9rem}
+
+@media (max-width:1000px){ .grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <p class="brand"><img src="/assets/datarails.svg" alt="Datarails" width="96" height="22"><span class="name spooky">Buzzer Host 🧛</span></p>
+    <div class="topctl">
+      <span id="offline" hidden>Reconnecting…</span>
+      <button class="iconbtn" id="mute" title="Sound on / off"></button>
+      <button class="iconbtn" id="logout" title="Sign out" aria-label="Sign out" hidden>⏏</button>
+    </div>
+  </header>
+
+  <section class="login" id="loginView" hidden>
+    <div class="card">
+      <h2 class="spooky">Host’s crypt</h2>
+      <p class="small" style="margin:0">Enter the admin password (the <b>ADMIN_PASSWORD</b> you set on Vercel).</p>
+      <form id="loginForm">
+        <label class="sr" for="pw">Admin password</label>
+        <input class="field" id="pw" type="password" placeholder="Password" required autocomplete="current-password">
+        <button class="btn big">Enter →</button>
+      </form>
+      <p class="err" id="loginErr" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section id="adminView" hidden>
+    <p class="joinurl">Players join at <code id="joinUrl"></code><button class="btn ghost sm" id="copyUrl">Copy link</button></p>
+    <div class="grid">
+      <div>
+        <div class="card buzzcard" id="buzzCard" aria-live="polite"></div>
+        <p class="hint"><kbd>A</kbd> approve · <kbd>D</kbd> decline · <kbd>L</kbd> lock / unlock buzzers</p>
+        <div class="sectionh"><h3>Recent calls</h3><span class="small" id="logCount"></span></div>
+        <ul class="log" id="log"></ul>
+      </div>
+      <aside class="card board">
+        <h2 class="spooky">Scareboard</h2>
+        <p class="small" style="margin:0 0 10px">Every approval gives the buzzer’s team +1. Fix mistakes with − / +.</p>
+        <div id="teams"></div>
+        <div class="foot">
+          <div class="row" style="margin:0"><button class="btn ghost sm" id="addTeam">＋ Team</button><button class="btn ghost sm" id="rmTeam">− Team</button></div>
+          <div class="row" style="margin:0"><button class="btn ghost sm" id="resetScores">↺ Reset scores</button><button class="btn ghost sm" id="newGame">🧹 New game</button></div>
+        </div>
+      </aside>
+    </div>
+    <section class="card players">
+      <div class="sectionh" style="margin:0"><h2 class="spooky">Ghouls in the game <span id="pcount" class="small"></span></h2><button class="btn ghost sm" id="rebalance">⚖ Rebalance teams</button></div>
+      <p class="small" style="margin:4px 0 0">New players always join the smallest team. Removing someone (×) or changing the number of teams evens the teams out again.</p>
+      <div class="pgroups" id="pgroups"></div>
+    </section>
+  </section>
+
+  <p class="credits">Datarails · Halloween 2026 · Bob says: know your sheet.</p>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <h2 class="spooky" id="dlgTitle"></h2>
+  <p id="dlgText"></p>
+  <div class="row"><button class="btn ghost" value="no" id="dlgNo">Cancel</button><button class="btn pink" id="dlgYes"></button></div>
+</dialog>
+
+<script src="/common.js"></script>
+<script>
+const POLL_MS = 700;
+let key = store.get('bz-admin', '');
+let state = null, lastBuzzKey = null, busy = false, pollTimer, polling = false;
+
+setupMute($('mute'));
+$('joinUrl').textContent = location.origin;
+$('copyUrl').onclick = async () => {
+  try { await navigator.clipboard.writeText(location.origin); toast('Link copied. Paste it in the Zoom chat! 📋', 'good'); }
+  catch { toast(location.origin); }
+};
+
+function show(view) {
+  $('loginView').hidden = view !== 'login';
+  $('adminView').hidden = view !== 'admin';
+  $('logout').hidden = view !== 'admin';
+  if (view === 'login') setTimeout(() => $('pw').focus(), 50);
+}
+
+async function api(body) {
+  const res = await fetch('/api/admin', body
+    ? { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-key': key }, body: JSON.stringify(body) }
+    : { headers: { 'x-admin-key': key }, cache: 'no-store' });
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401) { const e = new Error(data.error || 'Wrong password'); e.auth = true; throw e; }
+  if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+  return data;
+}
+
+function ask(title, text, yes) {
+  return new Promise(resolve => {
+    $('dlgTitle').textContent = title;
+    $('dlgText').textContent = text;
+    $('dlgYes').textContent = yes;
+    $('dlgYes').onclick = () => { $('dlg').close(); resolve(true); };
+    $('dlgNo').onclick = () => { $('dlg').close(); resolve(false); };
+    $('dlg').onclose = () => resolve(false);
+    $('dlg').showModal();
+  });
+}
+
+async function act(body, okMsg) {
+  if (busy) return;
+  busy = true;
+  audio();
+  try {
+    const s = await api(body);
+    apply(s);
+    if (okMsg) toast(typeof okMsg === 'function' ? okMsg(s) : okMsg, 'good');
+    return s;
+  } catch (e) {
+    if (e.auth) return loggedOut(e.message);
+    toast(e.message, 'bad', 5000);
+  } finally {
+    busy = false;
+  }
+}
+
+/* ---------- login ---------- */
+$('loginForm').onsubmit = async e => {
+  e.preventDefault();
+  audio();
+  key = $('pw').value;
+  $('loginErr').textContent = '';
+  try {
+    apply(await api());
+    store.set('bz-admin', key);
+    show('admin');
+    poll();
+  } catch (err) {
+    $('loginErr').textContent = err.message;
+  }
+};
+function loggedOut(msg) {
+  clearTimeout(pollTimer);
+  key = '';
+  store.del('bz-admin');
+  show('login');
+  if (msg) $('loginErr').textContent = msg;
+}
+$('logout').onclick = () => loggedOut();
+
+/* ---------- rendering ---------- */
+const teamName = i => state?.teams[i]?.n ?? `Team ${i + 1}`;
+function ago(ms) {
+  const s = Math.max(0, Math.round((state.t - ms) / 1000));
+  return s < 60 ? `${s}s ago` : `${Math.floor(s / 60)}m ${s % 60}s ago`;
+}
+
+function renderBuzz() {
+  const b = state.buzz, card = $('buzzCard');
+  card.classList.toggle('hot', !!(b && !b.paused));
+  if (!b) {
+    card.innerHTML = `<div class="idle"><img class="bob" src="/assets/bob.png" alt=""><h2 class="spooky">Waiting for a buzz…</h2>
+      <p>Call out the item, then watch this space. The first ghoul to buzz shows up here.</p>
+      <div class="row"><button class="btn ghost" data-act="pause">🔒 Lock buzzers <kbd>L</kbd></button></div></div>`;
+  } else if (b.paused) {
+    card.innerHTML = `<div class="paused"><div class="lock">🔒</div><h2 class="spooky">Buzzers locked</h2>
+      <p>Nobody can buzz until you open them again.</p>
+      <div class="row"><button class="btn big" data-act="resume">🔓 Open buzzers <kbd>L</kbd></button></div></div>`;
+  } else {
+    const { name, emoji } = teamParts(teamName(b.team));
+    card.innerHTML = `<div class="hotbox"><div class="tag">First to buzz</div><div class="who">${esc(b.name)}</div>
+      <div class="team"><b>${esc(emoji)}</b>${esc(name)}</div>
+      <p class="ago" id="ago">${ago(b.at)}</p>
+      <div class="row"><button class="btn good big" data-act="approve">✓ Approve +1 <kbd>A</kbd></button>
+      <button class="btn pink big" data-act="decline">✗ Decline <kbd>D</kbd></button></div></div>`;
+  }
+}
+
+function renderTeams() {
+  const box = $('teams');
+  const max = Math.max(...state.teams.map(t => t.s));
+  // Rebuild only when the number of teams changes so we don't clobber a name being edited.
+  if (box.children.length !== state.teams.length) {
+    box.innerHTML = state.teams.map((_, i) => `<div class="team"><span class="crown" aria-hidden="true">👑</span>
+      <input aria-label="Team ${i + 1} name" maxlength="24" data-team="${i}"><div class="meta"></div><div class="pts"></div>
+      <div class="ctl"><button class="sq" data-score="${i}" data-delta="-1" aria-label="Minus one point">−</button><button class="sq plus" data-score="${i}" data-delta="1" aria-label="Plus one point">+</button></div></div>`).join('');
+  }
+  state.teams.forEach((t, i) => {
+    const row = box.children[i];
+    row.classList.toggle('lead', t.s > 0 && t.s === max);
+    const inp = row.querySelector('input');
+    if (document.activeElement !== inp) inp.value = t.n;
+    row.querySelector('.meta').textContent = `${t.c} ${t.c === 1 ? 'player' : 'players'}`;
+    row.querySelector('.pts').textContent = t.s;
+  });
+  $('rmTeam').disabled = state.teams.length <= 1;
+  $('addTeam').disabled = state.teams.length >= 8;
+}
+
+let playersSig = '';
+function renderPlayers() {
+  const sig = JSON.stringify([state.teams.map(t => t.n), state.players]);
+  if (sig === playersSig) return;
+  playersSig = sig;
+  $('pcount').textContent = `· ${state.players.length}`;
+  $('pgroups').innerHTML = state.teams.map((t, i) => {
+    const ps = state.players.filter(p => p.team === i);
+    return `<div class="pgroup"><h4><span>${esc(t.n)}</span><span>${ps.length}</span></h4><ul>${
+      ps.map(p => `<li><span title="${esc(p.name)}">${esc(p.name)}</span><button data-kick="${esc(p.id)}" data-name="${esc(p.name)}" title="Remove ${esc(p.name)}" aria-label="Remove ${esc(p.name)}">×</button></li>`).join('')
+      || '<li class="empty">No one yet</li>'}</ul></div>`;
+  }).join('');
+}
+
+function renderLog() {
+  $('log').innerHTML = state.log.slice(0, 8).map(v =>
+    `<li><span class="v">${v.v === 'a' ? '✅' : '❌'}</span><span class="n"><b>${esc(v.name)}</b> · ${esc(teamName(v.team))}</span><span class="t">${ago(v.judgedAt)}</span></li>`
+  ).join('') || '<li><span class="small">No calls yet.</span></li>';
+}
+
+function apply(s) {
+  state = s;
+  const b = s.buzz;
+  const k = !b ? 'idle' : b.paused ? 'paused' : b.k;
+  if (k !== lastBuzzKey) {
+    if (b && !b.paused) { SFX.ding(); flash(); }
+    renderBuzz();
+  } else if (b && !b.paused) {
+    $('ago').textContent = ago(b.at);
+  }
+  lastBuzzKey = k;
+  renderTeams();
+  renderPlayers();
+  renderLog();
+}
+
+/* ---------- actions ---------- */
+function judge(verdict) {
+  const b = state?.buzz;
+  if (!b || b.paused) return;
+  act({ action: verdict, token: b.k }, s => s.result?.ok
+    ? (verdict === 'approve' ? `✅ +1 for ${teamName(b.team)}. Buzzer released.` : '❌ Declined. Buzzer released.')
+    : 'That buzz was already handled.');
+  if (verdict === 'approve') SFX.point(); else SFX.minus();
+}
+
+$('buzzCard').onclick = e => {
+  const a = e.target.closest('[data-act]')?.dataset.act;
+  if (a === 'approve' || a === 'decline') judge(a);
+  else if (a) act({ action: a });
+};
+document.addEventListener('keydown', e => {
+  if ($('adminView').hidden || $('dlg').open || e.target.closest('input') || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k === 'a') judge('approve');
+  else if (k === 'd') judge('decline');
+  else if (k === 'l' && state) {
+    if (!state.buzz) act({ action: 'pause' });
+    else if (state.buzz.paused) act({ action: 'resume' });
+  }
+});
+
+$('teams').addEventListener('click', e => {
+  const b = e.target.closest('[data-score]');
+  if (b) act({ action: 'score', team: +b.dataset.score, delta: +b.dataset.delta });
+});
+$('teams').addEventListener('change', e => {
+  const i = e.target.dataset.team;
+  if (i === undefined) return;
+  const names = state.teams.map(t => t.n);
+  names[i] = e.target.value.trim() || names[i];
+  e.target.blur();
+  act({ action: 'teams', teams: names }, 'Team renamed');
+});
+$('teams').addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
+
+const EXTRA_TEAMS = ['Frankensheet 🧟‍♂️', 'The Ghoul Ledger 💀', 'Witch Way to EBITDA 🧙', 'Mummy Margins 🪦', 'Boo-dget 🦇'];
+$('addTeam').onclick = async () => {
+  if (!(await ask('Add a team?', 'Players will be moved around so every team is the same size again. Let everyone know their team may change.', 'Add team'))) return;
+  const names = state.teams.map(t => t.n);
+  names.push(EXTRA_TEAMS.find(n => !names.includes(n)) || `Team ${names.length + 1}`);
+  act({ action: 'teams', teams: names }, s => `Team added · ${s.result?.moved || 0} players moved`);
+};
+$('rmTeam').onclick = async () => {
+  const last = state.teams[state.teams.length - 1];
+  if (!(await ask(`Remove ${last.n}?`, `Its ${last.c} players move to the other teams and its ${last.s} points are lost.`, 'Remove team'))) return;
+  act({ action: 'teams', teams: state.teams.slice(0, -1).map(t => t.n) }, s => `Team removed · ${s.result?.moved || 0} players moved`);
+};
+$('resetScores').onclick = async () => {
+  if (await ask('Reset the Scareboard?', 'All team scores go back to 0 and the buzzer is released. Players stay in their teams.', 'Reset scores')) act({ action: 'resetScores' }, 'Scores reset');
+};
+$('newGame').onclick = async () => {
+  if (await ask('Start a new game?', 'Scores and all players are wiped. Everyone has to enter their name again. Team names are kept.', 'New game')) act({ action: 'newGame' }, 'New game started');
+};
+$('rebalance').onclick = () => act({ action: 'rebalance' }, s => s.result?.moved ? `${s.result.moved} players moved` : 'Teams are already even');
+$('pgroups').onclick = async e => {
+  const b = e.target.closest('[data-kick]');
+  if (!b) return;
+  if (await ask(`Remove ${b.dataset.name}?`, 'They’ll be sent back to the join screen. Teams are evened out afterwards.', 'Remove')) {
+    act({ action: 'kick', id: b.dataset.kick }, `${b.dataset.name} removed`);
+  }
+};
+
+/* ---------- polling ---------- */
+async function poll() {
+  clearTimeout(pollTimer);
+  if (polling) return;
+  polling = true;
+  try {
+    if (!busy) apply(await api());
+    $('offline').hidden = true;
+  } catch (e) {
+    if (e.auth) return loggedOut(e.message);
+    $('offline').hidden = false;
+  } finally {
+    polling = false;
+    if (key) pollTimer = setTimeout(poll, POLL_MS);
+  }
+}
+
+if (key) {
+  show('admin');
+  poll();
+} else show('login');
+</script>
+</body>
+</html>
