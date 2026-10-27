@@ -54,7 +54,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--glow);outline-o
 .wrap{max-width:1400px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) max(32px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(32px,env(safe-area-inset-left));position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
 .top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
 .brand{display:flex;align-items:center;gap:14px;margin:0;min-width:0}
-.brand img{height:22px;width:auto;display:block;flex:none}
+.brand img{height:26px;width:auto;display:block;flex:none}
 .brand .name{font-size:1.6rem;color:var(--pumpkin-text);line-height:1;white-space:nowrap}
 .topctl{display:flex;gap:8px;flex:none}
 .iconbtn{width:46px;height:46px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font-size:21px;line-height:1;cursor:pointer;display:grid;place-items:center;transition:transform .1s,background .15s;box-shadow:var(--shadow)}
@@ -120,8 +120,10 @@ dialog .row{justify-content:flex-end;margin-top:6px}
   .fog{mix-blend-mode:normal}
   .vignette{animation:none;opacity:.9}
   dialog{padding:22px 20px}
-  .brand .name{font-size:1.3rem}
-  .brand img{display:none}
+  /* Logo stacked above the title so both fit next to the buttons on narrow phones. */
+  .brand{flex-direction:column;align-items:flex-start;gap:5px}
+  .brand img{height:19px}
+  .brand .name{font-size:1.25rem}
   .iconbtn{width:44px;height:44px;font-size:18px;border-radius:12px}
 }
 @media (prefers-reduced-motion: reduce){
