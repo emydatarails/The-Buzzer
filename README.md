@@ -2,8 +2,10 @@
 
 The buzzer for the **Spooky Sheet** Datarails Halloween scavenger hunt.
 
-- **Players** (`/`) enter their name, get sorted into the smallest team automatically, and see one big buzzer plus a HUD with their name, team, their own points and their team's score.
-- **Host** (`/admin`) sees who buzzed first, then **Approve** (+1 to that player and +1 to their team) or **Decline**. Either way the buzzer is released for everyone. A **Top hunters** leaderboard ranks players by their own points.
+Everyone plays for themselves.
+
+- **Players** (`/`) enter their name and see one big buzzer plus a HUD with their name, their points and their rank.
+- **Host** (`/admin`) sees who buzzed first, then **Approve** (+1 point for that player) or **Decline**. Either way the buzzer is released for everyone. The **Scareboard** ranks the top 10 players.
 
 The first buzz is decided atomically in Redis, so if two people hit it at the same moment exactly one of them wins.
 
@@ -28,23 +30,19 @@ Then:
 
 | Host action | How |
 |---|---|
-| Approve the first buzz (+1 to the player and their team) | **✓ Approve** or <kbd>A</kbd> |
+| Approve the first buzz (+1 point for that player) | **✓ Approve** or <kbd>A</kbd> |
 | Decline it | **✗ Decline** or <kbd>D</kbd> |
 | Lock buzzers between items so nobody buzzes early | **🔒 Lock buzzers** or <kbd>L</kbd> (press again to open) |
-| Fix a team score | − / + on the Scareboard (team only) |
-| Fix a player's points | Tap the player in the list → −1 / +1 (changes their team's score too) |
-| Rename / add / remove teams | Edit the name in place, **＋ Team** / **− Team** |
+| Fix a player's points | Tap the player under **All hunters** → −1 / +1 |
 | Remove a player who left | Tap the player → **Remove player** |
-| Wipe team and player points, keep players | **↺ Reset scores** |
+| Wipe everyone's points, keep players | **↺ Reset scores** |
 | Start over (everyone re-enters their name) | **🧹 New game** |
-
-**Team balancing.** Each new player joins the team with the fewest players (ties are random). Whenever teams get uneven (you remove a player, or add or remove a team), the most recently joined players of the biggest team are moved to the smallest. Moved players see a message saying which team they're on now.
 
 ## How it works
 
 - `public/`: static pages (`index.html` = player, `admin.html` = host), the shared theme and the fonts and Bob artwork from the main game.
 - `api/`: Vercel functions: `state` (public state), `join`, `buzz`, `admin` (password protected).
-- `lib/game.js`: game logic. Joining, buzzing and judging are Lua scripts, so each one runs atomically in Redis.
+- `lib/game.js`: game logic. Buzzing and judging are Lua scripts, so each one runs atomically in Redis.
 
 Players poll `/api/state` about once a second. Vercel's CDN and the function itself share one database read per second, so the load doesn't grow with the number of players. When you buzz, the result comes straight back from the server. With the admin page open, a live game uses about 40k Redis commands an hour. That's well inside Upstash's free 500K commands a month, so close the admin tab when you're not playing.
 

@@ -25,16 +25,17 @@
 
 /* ---------- Play ---------- */
 .play{flex:1;display:flex;flex-direction:column;align-items:center;gap:clamp(14px,3vh,36px);animation:fadein .35s both;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-.hud{width:min(100%,760px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) auto;gap:6px 18px;align-items:center;padding:16px 22px}
+.hud{width:min(100%,640px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 18px;align-items:center;padding:16px 22px}
 .hud .lbl{display:block;font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);line-height:1.2}
 .hud .val{display:block;font-weight:700;font-size:clamp(1.05rem,2.4vw,1.35rem);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hud .team .val{color:var(--pumpkin-text);white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.hud .score .of{font-family:Poppins,sans-serif;font-size:.85rem;color:var(--muted);margin-left:3px}
 .hud .scores{display:flex;gap:20px;padding-left:18px;border-left:2px solid var(--line-soft)}
 .hud .score{text-align:right}
+.hud .who .val{font-size:clamp(1.25rem,3vw,1.6rem)}
 .hud .score .val{font-family:Creepster,Poppins,sans-serif;font-weight:400;font-size:clamp(2.6rem,7vw,3.4rem);line-height:1;color:var(--ink);overflow:visible;font-variant-numeric:tabular-nums}
 .hud .score.mine .val{color:var(--pumpkin)}
+.hud .score .val.dim{color:var(--muted)}
 .hud .score .val.pop{animation:pop .4s cubic-bezier(.2,1.4,.5,1);color:var(--pink)}
-.hud .short{display:none}
 
 .buzzwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,3vh,22px);width:100%}
 .buzzer{--size:min(76vw,46vh,380px);position:relative;flex:none;width:var(--size);height:var(--size);border-radius:50%;border:0;cursor:pointer;padding:0;
@@ -75,11 +76,8 @@ body.playing .credits{display:none}
 @media (max-width:1000px){ .peek{display:none} }
 @media (max-width:560px){
   .hud{grid-template-columns:minmax(0,1fr) auto;padding:12px 16px;gap:4px 14px}
-  .hud .who{grid-column:1}
-  .hud .team{grid-column:1;grid-row:2}
-  .hud .scores{grid-column:2;grid-row:1/3;padding-left:14px;gap:14px}
+  .hud .scores{padding-left:14px;gap:16px}
 }
-@media (max-width:560px){ .hud .long{display:none} .hud .short{display:inline} }
 /* Short phones (Safari toolbars showing, iPhone SE…) */
 @media (max-height:700px){
   .top{margin-bottom:10px}
@@ -95,11 +93,9 @@ body.playing .credits{display:none}
   .top .name{display:none}
   .play{flex-direction:row;justify-content:center;gap:24px}
   .hud{width:220px;flex:none;grid-template-columns:1fr;padding:12px 16px}
-  .hud .who,.hud .team,.hud .scores{grid-column:1;grid-row:auto}
+  .hud .who,.hud .scores{grid-column:1;grid-row:auto}
   .hud .scores{padding:8px 0 0;border-left:0;border-top:2px solid var(--line-soft);gap:28px}
   .hud .score{text-align:left}
-  .hud .long{display:none}
-  .hud .short{display:inline}
   .buzzwrap{flex:none;width:auto;flex-direction:row;gap:28px}
   .buzzer{--size:min(64vh,40vw)}
   @supports (height:1svh){ .buzzer{--size:min(64svh,40vw)} }
@@ -131,7 +127,7 @@ body.playing .credits{display:none}
       <img class="bob" src="/assets/bob.png" alt="Bob the FPandA in a vampire cape">
       <p class="eyebrow">Datarails Halloween&nbsp;· Scavenger hunt</p>
       <h1 class="spooky" id="joinTitle">Spooky <span class="em">Buzzer</span></h1>
-      <p class="lead" id="joinLead">Tell Bob your name and he’ll sort you into a team.</p>
+      <p class="lead" id="joinLead">Tell Bob your name and start hunting. Every find you get first is a point.</p>
       <form id="joinForm" autocomplete="off" novalidate>
         <label class="sr" for="name">Your name</label>
         <input class="field" id="name" maxlength="24" placeholder="Your name" autocomplete="given-name" enterkeyhint="go">
@@ -146,10 +142,9 @@ body.playing .credits{display:none}
   <section class="play" id="playView" hidden>
     <div class="card hud" aria-label="Your scores">
       <div class="who"><span class="lbl">Hunter</span><span class="val" id="hudName"></span></div>
-      <div class="team"><span class="lbl">Your team</span><span class="val" id="hudTeam"></span></div>
       <div class="scores" aria-live="polite">
-        <div class="score mine"><span class="lbl"><span class="long">Your points</span><span class="short">You</span></span><span class="val" id="hudMine">–</span></div>
-        <div class="score"><span class="lbl"><span class="long">Team score</span><span class="short">Team</span></span><span class="val" id="hudScore">–</span></div>
+        <div class="score"><span class="lbl">Rank</span><span class="val" id="hudRank">–</span></div>
+        <div class="score mine"><span class="lbl">Points</span><span class="val" id="hudMine">–</span></div>
       </div>
     </div>
     <div class="buzzwrap">
@@ -169,18 +164,17 @@ body.playing .credits{display:none}
 <script src="/common.js"></script>
 <script>
 const POLL_MS = 1200, HIDDEN_POLL_MS = 5000, TIMEOUT_MS = 5000, OFFLINE_AFTER_MS = 4000;
-let me = store.get('bz-me');      // { id, name, team, t }
+let me = store.get('bz-me');      // { id, name, t }
 let state = null;                 // last server state
 let fresh = 0;                    // ignore cached states older than our last action
 let stale = false;                // just came back to the tab: wait for fresh state
 let lastVerdict;                  // token of the last verdict we reacted to
 let pressedOn = null;             // buzz token we lost a race against (for "TOO SLOW")
-let lastScore = null, lastMine = null, pending = false, lastMode = '';
+let lastMine = null, pending = false, lastMode = '';
 
 setupMute($('mute'));
 
 const firstName = n => String(n).split(' ')[0];
-const teamLabel = n => { const p = teamParts(n); return `${p.emoji} ${p.name}`; };
 
 function show(view, edit = false) {
   $('joinView').hidden = view !== 'join';
@@ -193,8 +187,8 @@ function show(view, edit = false) {
     $('cancelBtn').hidden = !edit;
     $('joinTitle').innerHTML = edit ? 'Change <span class="em">name</span>' : 'Spooky <span class="em">Buzzer</span>';
     $('joinLead').innerHTML = edit
-      ? `You’ll stay on <b>${esc(state?.teams[me.team]?.n || me.teamName || 'your team')}</b>.`
-      : 'Tell Bob your name and he’ll sort you into a team.';
+      ? 'You’ll keep your points.'
+      : 'Tell Bob your name and start hunting. Every find you get first is a point.';
     $('joinBtn').textContent = edit ? 'Save name' : 'Join the hunt →';
     $('joinErr').textContent = '';
     $('name').value = me?.name || store.get('bz-name', '');
@@ -251,7 +245,7 @@ $('joinForm').onsubmit = async e => {
   try {
     const id = me?.id || newId();
     const r = await api('/api/join', { id, name });
-    me = { id, name: r.name, team: r.team, teamName: r.teamName, t: r.t };
+    me = { id, name: r.name, t: r.t };
     fresh = r.t;
     store.set('bz-me', me);
     store.set('bz-name', r.name);
@@ -259,7 +253,7 @@ $('joinForm').onsubmit = async e => {
     show('play');
     render();
     if (editing) toast(`Name changed to ${r.name} ✍️`, 'good');
-    else { SFX.point(); toast(`Welcome to ${r.teamName}! 🎃`, 'good'); }
+    else { SFX.point(); toast(`Welcome, ${firstName(r.name)}! Happy hunting 🎃`, 'good'); }
     poll(true);
   } catch (err) {
     $('joinErr').textContent = err.message;
@@ -344,25 +338,23 @@ function pop(el) {
 
 function render() {
   if (!me?.id || $('playView').hidden) return;
-  const teams = state?.teams || [];
-  const team = teams[me.team];
   $('hudName').textContent = me.name;
-  $('hudTeam').textContent = teamLabel(team?.n || me.teamName || '…');
-  const score = team ? team.s : null;
   const mine = state ? state.p?.[me.id] || 0 : null;
-  if (lastScore != null && score > lastScore) pop($('hudScore'));
   if (lastMine != null && mine > lastMine) pop($('hudMine'));
-  $('hudScore').textContent = score ?? '–';
   $('hudMine').textContent = mine ?? '–';
-  if (score != null) lastScore = score;
   if (mine != null) lastMine = mine;
+  // Rank among everyone (ties share a rank); only once you have a point.
+  const all = Object.values(state?.p || {});
+  const rank = mine > 0 ? 1 + all.filter(x => x > mine).length : null;
+  $('hudRank').innerHTML = rank ? `#${rank}<span class="of">of ${all.length}</span>` : '–';
+  $('hudRank').classList.toggle('dim', !rank);
 
   const m = pending ? 'pending' : mode();
   const btn = $('buzzer');
   const b = state?.buzz;
   const mv = myLastVerdict();
   const readyLine = !mv ? 'Find the item, then hit the buzzer!'
-    : mv.v === 'a' ? '✅ Your last find was approved, +1 for you! Hunt for the next one.'
+    : mv.v === 'a' ? '✅ Your last find was approved, +1 point! Hunt for the next one.'
     : '❌ Your last find was declined. Hunt for the next one!';
   const copy = {
     wait: ['…', 'Waking up the crypt', 'Catching up…'],
@@ -373,10 +365,9 @@ function render() {
     paused: ['LOCKED', 'Wait for the next item', 'Buzzers are locked. Get ready for the next item 👀'],
   }[m];
   if (m === 'taken') {
-    const t = teams[b.team]?.n;
     copy[0] = pressedOn === b.k ? 'TOO SLOW' : 'HOLD ON';
     copy[1] = `${firstName(b.name)} got it`;
-    copy[2] = `👻 <b>${esc(b.name)}</b>${t ? ` (${esc(teamParts(t).name)})` : ''} is showing Bob…`;
+    copy[2] = `👻 <b>${esc(b.name)}</b> is showing Bob…`;
   }
   btn.className = 'buzzer' + (m === 'mine' ? ' mine' : m === 'taken' || m === 'paused' || m === 'wait' ? ' locked' : m === 'pending' ? ' pending' : '');
   if (lastMode && m !== lastMode && m !== 'pending' && lastMode !== 'pending') { btn.classList.add('flip'); setTimeout(() => btn.classList.remove('flip'), 500); }
@@ -401,15 +392,13 @@ function onVerdict(v) {
     if (store.get('bz-seen') === v.k || age > 5 * 60 * 1000) return;
     store.set('bz-seen', v.k);
     store.set('bz-myverdict', { id: me.id, v: v.v, seenAt: Date.now() });
-    if (v.v === 'a') { toast('✅ Approved! +1 for you and your team 🎉', 'good', 5000); SFX.point(); flash('good'); navigator.vibrate?.([60, 40, 60]); }
+    if (v.v === 'a') { toast('✅ Approved! +1 point for you 🎉', 'good', 5000); SFX.point(); flash('good'); navigator.vibrate?.([60, 40, 60]); }
     else { toast('❌ Declined. Bob wasn’t convinced. Keep hunting!', 'bad', 5000); SFX.minus(); }
     return;
   }
   if (first || age > 15000) return;
   if (v.v === 'a') {
-    const ours = v.team === me.team;
-    toast(ours ? `🎉 ${v.name} scored +1 for your team!` : `🎃 ${v.name} scored for ${teamParts(state.teams[v.team]?.n || 'their team').name}`, ours ? 'good' : '', 4000);
-    if (ours) SFX.point();
+    toast(`🎃 ${v.name} scored a point!`, '', 3500);
   } else {
     toast(`🙅 ${v.name}’s find was declined. Buzzer is open!`, '', 3500);
   }
@@ -420,15 +409,7 @@ function apply(s) {
   state = s;
   stale = false;
   if (me?.id) {
-    const team = s.a[me.id];
-    if (team === undefined) { signedOut(); return; }
-    if (team !== me.team) {
-      me.team = team;
-      me.teamName = s.teams[team]?.n;
-      store.set('bz-me', me);
-      toast(`Bob moved you to ${me.teamName} to keep the teams even 🧛`, '', 6000);
-      lastScore = null;
-    }
+    if (s.p[me.id] === undefined) { signedOut(); return; }
     if (s.buzz?.k !== pressedOn) pressedOn = null;
   }
   onVerdict(s.last);
