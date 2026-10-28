@@ -63,10 +63,34 @@
 .pgroups{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:10px}
 .pgroup h4{margin:0 0 6px;font-size:1rem;color:var(--pumpkin-text);display:flex;justify-content:space-between;gap:8px}
 .pgroup ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;max-height:320px;overflow:auto}
-.pgroup li{display:flex;align-items:center;gap:6px;background:var(--surface2);border-radius:10px;padding:4px 4px 4px 12px;font-size:.95rem}
-.pgroup li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pgroup li button{flex:none;width:44px;height:44px;margin:-8px -4px -8px 0;border-radius:50%;border:0;background:transparent;color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1}
+.prow{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;background:var(--surface2);border:2px solid transparent;border-radius:10px;padding:6px 12px;font:inherit;font-size:.95rem;color:var(--ink);text-align:left;cursor:pointer;transition:border-color .15s}
+.prow:active{border-color:var(--pumpkin)}
+.prow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pp{flex:none;min-width:2.2em;text-align:center;font-weight:700;font-size:.9rem;border-radius:999px;padding:1px 8px;background:var(--line-soft);color:var(--muted);font-variant-numeric:tabular-nums}
+.pp.on{background:var(--pumpkin);color:var(--navy)}
 .pgroup .empty{color:var(--muted);font-size:.9rem;padding:4px 0}
+
+/* ---------- Top hunters ---------- */
+.tophunters{margin-top:18px;padding-top:14px;border-top:2px solid var(--line-soft)}
+.tophunters h3{margin:0 0 8px;font-size:1.7rem;color:var(--pumpkin-text)}
+.tophunters ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.tophunters li{display:grid;grid-template-columns:2.2em minmax(0,1fr) auto;align-items:center;gap:8px;padding:6px 10px;border-radius:12px}
+.tophunters li:first-child{background:rgba(253,161,17,.10);box-shadow:inset 4px 0 0 var(--pumpkin)}
+.tophunters .rk{font-weight:700;color:var(--muted);text-align:center;font-size:1.1rem}
+.tophunters .who{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.tophunters .who small{color:var(--muted);font-weight:400;margin-left:6px}
+.tophunters .n{font-weight:700;font-size:1.5rem;font-variant-numeric:tabular-nums;line-height:1}
+.tophunters li:first-child .n{color:var(--pink)}
+.tophunters .none{color:var(--muted);font-size:.95rem}
+
+/* ---------- Player dialog ---------- */
+#pdlg{text-align:center;width:min(92vw,420px)}
+#pdlg h2{overflow-wrap:break-word}
+#pdlg .pbig{font-family:Creepster,Poppins,sans-serif;font-size:4.2rem;line-height:1;color:var(--pumpkin);margin:4px 0 0}
+#pdlg .pbig small{display:block;font-family:Poppins,sans-serif;font-size:.95rem;color:var(--muted);margin-top:2px}
+#pdlg .row{justify-content:center}
+#pdlg .row .btn{flex:1}
+#pdlg .note{margin:12px 0 4px;font-size:.9rem}
 .hint{font-size:.9rem;color:var(--muted);text-align:center;margin:12px 0 0}
 .hint kbd{font:600 .85em Poppins,sans-serif;background:var(--kbd-ghost);border:1px solid var(--line);padding:1px 7px;border-radius:6px;margin:0 2px}
 #offline{color:var(--pink);font-weight:600;font-size:.9rem}
@@ -74,9 +98,8 @@
 @media (hover:hover){
   .team input:hover{border-color:var(--line)}
   .sq:hover{background:var(--line-soft)}
-  .pgroup li button:hover{background:rgba(247,52,118,.2);color:var(--pink)}
+  .prow:hover{border-color:var(--line)}
 }
-.pgroup li button:active{background:rgba(247,52,118,.2);color:var(--pink)}
 @media (pointer:coarse){ .hint,.hotbox kbd,.idle kbd,.paused kbd{display:none} }
 @media (max-width:1000px){
   .grid{grid-template-columns:minmax(0,1fr)}
@@ -137,23 +160,36 @@
       </div>
       <aside class="card board">
         <h2 class="spooky">Scareboard</h2>
-        <p class="small" style="margin:0 0 10px">Every approval gives the buzzer’s team +1. Fix mistakes with − / +.</p>
+        <p class="small" style="margin:0 0 10px">Every approval gives +1 to the player who buzzed and +1 to their team. − / + here change the team score only.</p>
         <div id="teams"></div>
         <div class="foot">
           <div class="row" style="margin:0"><button class="btn ghost sm" id="addTeam">＋ Team</button><button class="btn ghost sm" id="rmTeam">− Team</button></div>
           <div class="row" style="margin:0"><button class="btn ghost sm" id="resetScores">↺ Reset scores</button><button class="btn ghost sm" id="newGame">🧹 New game</button></div>
         </div>
+        <div class="tophunters">
+          <h3 class="spooky">Top hunters</h3>
+          <ol id="top"></ol>
+        </div>
       </aside>
     </div>
     <section class="card players">
       <div class="sectionh" style="margin:0"><h2 class="spooky">Ghouls in the game <span id="pcount" class="small"></span></h2><button class="btn ghost sm" id="rebalance">⚖ Rebalance teams</button></div>
-      <p class="small" style="margin:4px 0 0">New players always join the smallest team. Removing someone (×) or changing the number of teams evens the teams out again.</p>
+      <p class="small" style="margin:4px 0 0">Tap a player to fix their points or remove them. New players always join the smallest team, and removing someone or changing the number of teams evens the teams out again.</p>
       <div class="pgroups" id="pgroups"></div>
     </section>
   </section>
 
   <p class="credits">Datarails · Halloween 2026 · Bob says: know your sheet.</p>
 </main>
+
+<dialog id="pdlg" aria-labelledby="pdlgName">
+  <h2 class="spooky" id="pdlgName"></h2>
+  <p id="pdlgTeam" style="margin:0"></p>
+  <div class="pbig"><span id="pdlgPts">0</span><small>points</small></div>
+  <div class="row"><button class="btn ghost" data-pd="-1" id="pdlgMinus">−1 point</button><button class="btn" data-pd="1">+1 point</button></div>
+  <p class="small note">Also changes their team’s score, so the two stay in sync.</p>
+  <div class="row"><button class="btn ghost" id="pdlgKick">Remove player</button><button class="btn ghost" id="pdlgClose">Close</button></div>
+</dialog>
 
 <dialog id="dlg" aria-labelledby="dlgTitle">
   <h2 class="spooky" id="dlgTitle"></h2>
@@ -300,12 +336,55 @@ function renderPlayers() {
   playersSig = sig;
   $('pcount').textContent = `· ${state.players.length}`;
   $('pgroups').innerHTML = state.teams.map((t, i) => {
-    const ps = state.players.filter(p => p.team === i);
+    const ps = state.players.filter(p => p.team === i).sort((x, y) => y.pts - x.pts || x.joined - y.joined);
     return `<div class="pgroup"><h4><span>${esc(t.n)}</span><span>${ps.length}</span></h4><ul>${
-      ps.map(p => `<li><span title="${esc(p.name)}">${esc(p.name)}</span><button data-kick="${esc(p.id)}" data-name="${esc(p.name)}" title="Remove ${esc(p.name)}" aria-label="Remove ${esc(p.name)}">×</button></li>`).join('')
+      ps.map(p => `<li><button class="prow" data-player="${esc(p.id)}" aria-label="${esc(p.name)}, ${p.pts} points"><span class="nm">${esc(p.name)}</span><b class="pp${p.pts ? ' on' : ''}">${p.pts}</b></button></li>`).join('')
       || '<li class="empty">No one yet</li>'}</ul></div>`;
   }).join('');
+  renderTop();
 }
+
+const MEDALS = ['🥇', '🥈', '🥉'];
+function renderTop() {
+  const top = state.players.filter(p => p.pts > 0).sort((x, y) => y.pts - x.pts || x.joined - y.joined).slice(0, 10);
+  let rank = 0, prev = null;
+  $('top').innerHTML = top.map((p, i) => {
+    if (p.pts !== prev) { rank = i; prev = p.pts; } // ties share a rank
+    return `<li><span class="rk">${MEDALS[rank] || rank + 1}</span><span class="who">${esc(p.name)}<small>${esc(teamParts(teamName(p.team)).emoji)}</small></span><span class="n">${p.pts}</span></li>`;
+  }).join('') || '<li class="none">No points yet. The first approved find lands here.</li>';
+}
+
+/* ---------- one player: fix points / remove ---------- */
+let pdlgId = null;
+function renderPlayerDialog() {
+  if (!$('pdlg').open) return;
+  const p = state.players.find(x => x.id === pdlgId);
+  if (!p) { $('pdlg').close(); return; }
+  $('pdlgName').textContent = p.name;
+  $('pdlgTeam').textContent = teamName(p.team);
+  $('pdlgPts').textContent = p.pts;
+  $('pdlgMinus').disabled = p.pts <= 0;
+}
+function openPlayer(id) {
+  pdlgId = id;
+  $('pdlg').showModal();
+  renderPlayerDialog();
+}
+$('pdlg').addEventListener('click', async e => {
+  const d = e.target.closest('[data-pd]')?.dataset.pd;
+  if (d) {
+    const s = await act({ action: 'playerScore', id: pdlgId, delta: +d });
+    if (s) { if (+d > 0) SFX.point(); else SFX.minus(); }
+  }
+});
+$('pdlgClose').onclick = () => $('pdlg').close();
+$('pdlgKick').onclick = async () => {
+  const p = state.players.find(x => x.id === pdlgId);
+  $('pdlg').close();
+  if (p && await ask(`Remove ${p.name}?`, 'They’ll be sent back to the join screen and lose their points. Teams are evened out afterwards.', 'Remove')) {
+    act({ action: 'kick', id: p.id }, `${p.name} removed`);
+  }
+};
 
 function renderLog() {
   $('log').innerHTML = state.log.slice(0, 8).map(v =>
@@ -326,6 +405,7 @@ function apply(s) {
   lastBuzzKey = k;
   renderTeams();
   renderPlayers();
+  renderPlayerDialog();
   renderLog();
 }
 
@@ -334,7 +414,7 @@ function judge(verdict) {
   const b = state?.buzz;
   if (!b || b.paused) return;
   act({ action: verdict, token: b.k }, s => s.result?.ok
-    ? (verdict === 'approve' ? `✅ +1 for ${teamName(b.team)}. Buzzer released.` : '❌ Declined. Buzzer released.')
+    ? (verdict === 'approve' ? `✅ +1 for ${b.name} and ${teamName(b.team)}. Buzzer released.` : '❌ Declined. Buzzer released.')
     : 'That buzz was already handled.');
   if (verdict === 'approve') SFX.point(); else SFX.minus();
 }
@@ -345,7 +425,7 @@ $('buzzCard').onclick = e => {
   else if (a) act({ action: a });
 };
 document.addEventListener('keydown', e => {
-  if ($('adminView').hidden || $('dlg').open || e.target.closest('input') || e.metaKey || e.ctrlKey || e.altKey) return;
+  if ($('adminView').hidden || $('dlg').open || $('pdlg').open || e.target.closest('input') || e.metaKey || e.ctrlKey || e.altKey) return;
   const k = e.key.toLowerCase();
   if (k === 'a') judge('approve');
   else if (k === 'd') judge('decline');
@@ -382,18 +462,15 @@ $('rmTeam').onclick = async () => {
   act({ action: 'teams', teams: state.teams.slice(0, -1).map(t => t.n) }, s => `Team removed · ${s.result?.moved || 0} players moved`);
 };
 $('resetScores').onclick = async () => {
-  if (await ask('Reset the Scareboard?', 'All team scores go back to 0 and the buzzer is released. Players stay in their teams.', 'Reset scores')) act({ action: 'resetScores' }, 'Scores reset');
+  if (await ask('Reset the Scareboard?', 'All team and player points go back to 0 and the buzzer is released. Players stay in their teams.', 'Reset scores')) act({ action: 'resetScores' }, 'Scores reset');
 };
 $('newGame').onclick = async () => {
   if (await ask('Start a new game?', 'Scores and all players are wiped. Everyone has to enter their name again. Team names are kept.', 'New game')) act({ action: 'newGame' }, 'New game started');
 };
 $('rebalance').onclick = () => act({ action: 'rebalance' }, s => s.result?.moved ? `${s.result.moved} players moved` : 'Teams are already even');
-$('pgroups').onclick = async e => {
-  const b = e.target.closest('[data-kick]');
-  if (!b) return;
-  if (await ask(`Remove ${b.dataset.name}?`, 'They’ll be sent back to the join screen. Teams are evened out afterwards.', 'Remove')) {
-    act({ action: 'kick', id: b.dataset.kick }, `${b.dataset.name} removed`);
-  }
+$('pgroups').onclick = e => {
+  const b = e.target.closest('[data-player]');
+  if (b) openPlayer(b.dataset.player);
 };
 
 /* ---------- polling ---------- */
