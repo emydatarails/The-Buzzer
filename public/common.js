@@ -47,12 +47,6 @@ function flash(kind = '') {
   f.className = `on ${kind}`;
 }
 
-// Splits "The Walking Debt 🧟" into { name: "The Walking Debt", emoji: "🧟" }.
-function teamParts(n) {
-  const m = String(n).match(/^(.*?)\s*(\p{Extended_Pictographic}[️‍\p{Extended_Pictographic}]*)?$/u) || [];
-  return { name: m[1] || n, emoji: m[2] || '🎃' };
-}
-
 /* ---------- sound (WebAudio, generated, same voice as the main game) ---------- */
 let actx = null, master = null, muted = store.get('bz-muted', false);
 function audio() {
